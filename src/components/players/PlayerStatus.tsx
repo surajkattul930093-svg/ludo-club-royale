@@ -33,7 +33,7 @@ export const PlayerStatus: React.FC<PlayerStatusProps> = ({
     if (connectionStatus === 'OFFLINE') return 'text-red-400 font-bold animate-pulse';
     if (connectionStatus === 'SLOW') return 'text-amber-400 font-bold';
     if (finishedCount === 4) return 'text-amber-300';
-    if (isCurrentTurn) return 'text-emerald-300 font-black animate-pulse';
+    if (isCurrentTurn) return 'text-inherit opacity-90 font-black animate-pulse';
     return 'text-slate-400 font-medium';
   };
 
@@ -58,4 +58,5 @@ export const PlayerStatus: React.FC<PlayerStatusProps> = ({
     </div>
   );
 };
+
 

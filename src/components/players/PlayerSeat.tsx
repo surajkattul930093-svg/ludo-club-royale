@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Player, PlayerColor } from '../../types/player';
 import { PlayerAvatar } from './PlayerAvatar';
 import { PlayerStatus } from './PlayerStatus';
@@ -28,30 +28,30 @@ const COLOR_ACCENTS: Record<
   blue: {
     border: 'border-[#0878E8]',
     glow: 'shadow-[0_0_20px_rgba(8,120,232,0.45)]',
-    bg: 'bg-gradient-to-br from-[#0878E8]/15 via-slate-900/90 to-slate-950/95',
-    nameColor: 'text-[#58adff]',
-    badgeBg: 'bg-[#0878E8]/20 text-[#58adff] border-[#0878E8]/40',
+    bg: 'bg-[#0878E8] text-white shadow-inner',
+    nameColor: 'text-white',
+    badgeBg: 'bg-white/20 text-white border-white/40',
   },
   yellow: {
     border: 'border-[#FFD21C]',
     glow: 'shadow-[0_0_20px_rgba(255,210,28,0.45)]',
-    bg: 'bg-gradient-to-br from-[#FFD21C]/15 via-slate-900/90 to-slate-950/95',
-    nameColor: 'text-[#ffd83d]',
-    badgeBg: 'bg-[#FFD21C]/20 text-[#ffd83d] border-[#FFD21C]/40',
+    bg: 'bg-[#FFD21C] text-slate-900 shadow-inner',
+    nameColor: 'text-slate-900',
+    badgeBg: 'bg-black/10 text-slate-900 border-black/20',
   },
   green: {
     border: 'border-[#08B83F]',
     glow: 'shadow-[0_0_20px_rgba(8,184,63,0.45)]',
-    bg: 'bg-gradient-to-br from-[#08B83F]/15 via-slate-900/90 to-slate-950/95',
-    nameColor: 'text-[#5ced88]',
-    badgeBg: 'bg-[#08B83F]/20 text-[#5ced88] border-[#08B83F]/40',
+    bg: 'bg-[#08B83F] text-white shadow-inner',
+    nameColor: 'text-white',
+    badgeBg: 'bg-white/20 text-white border-white/40',
   },
   red: {
     border: 'border-[#F01818]',
     glow: 'shadow-[0_0_20px_rgba(240,24,24,0.45)]',
-    bg: 'bg-gradient-to-br from-[#F01818]/15 via-slate-900/90 to-slate-950/95',
-    nameColor: 'text-[#ff6b6b]',
-    badgeBg: 'bg-[#F01818]/20 text-[#ff6b6b] border-[#F01818]/40',
+    bg: 'bg-[#F01818] text-white shadow-inner',
+    nameColor: 'text-white',
+    badgeBg: 'bg-white/20 text-white border-white/40',
   },
 };
 
@@ -88,7 +88,7 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
       <div className="flex flex-col min-w-0 max-w-[90px] sm:max-w-[120px] md:max-w-[140px] truncate">
         {/* Name and Color Tag */}
         <div className="flex items-center gap-1.5 truncate">
-          <span className="text-xs sm:text-sm font-black text-slate-100 truncate tracking-tight">
+          <span className={"text-xs sm:text-sm font-black truncate tracking-tight $\{isCurrentTurn ? 'text-inherit' : 'text-slate-100'\}"}>
             {player.name}
           </span>
         </div>
@@ -148,3 +148,5 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
     </div>
   );
 };
+
+

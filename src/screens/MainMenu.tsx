@@ -75,7 +75,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 text-slate-100 select-none overflow-x-hidden">
+    <div className="relative min-h-screen w-full flex flex-col justify-between app-bg p-4 sm:p-6 select-none overflow-x-hidden">
       {/* Background Subtle Radial Elements */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-blue-500/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-10 left-10 w-72 h-72 rounded-full bg-amber-500/10 blur-[100px] pointer-events-none" />
@@ -366,6 +366,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
 
 
 

@@ -25,7 +25,7 @@ export const ThemeToggle: React.FC = () => {
     <button
       onClick={() => themeService.cycleTheme()}
       title={getTitle()}
-      className="p-2 sm:p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 transition-all cursor-pointer shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center"
+      className="relative p-2 sm:p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 transition-all cursor-pointer shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center"
       aria-label="Toggle Theme"
     >
       {renderIcon()}
@@ -38,3 +38,4 @@ export const ThemeToggle: React.FC = () => {
     </button>
   );
 };
+
