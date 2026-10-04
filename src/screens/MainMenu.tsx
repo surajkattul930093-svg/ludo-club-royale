@@ -40,6 +40,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   onChangeAnimationSpeed,
 }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [playModePickerOpen, setPlayModePickerOpen] = useState(false);
   const [colorPickerMode, setColorPickerMode] = useState<GameMode | null>(null);
   const [isMatchmakingOpen, setIsMatchmakingOpen] = useState(false);
@@ -353,6 +354,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
 
 
 
