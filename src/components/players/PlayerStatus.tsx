@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { PlayerColor, PlayerStatusType } from '../../types/player';
 import { Wifi, WifiOff, Loader } from 'lucide-react';
 
@@ -25,7 +25,7 @@ export const PlayerStatus: React.FC<PlayerStatusProps> = ({
       if (status === 'MOVING') return 'MOVING...';
       return 'YOUR TURN';
     }
-    if (finishedCount > 0) return ${finishedCount}/4 HOME;
+    if (finishedCount > 0) return `${finishedCount}/4 HOME`;
     return 'WAITING';
   };
 
@@ -52,7 +52,7 @@ export const PlayerStatus: React.FC<PlayerStatusProps> = ({
       )}
 
       {/* Contextual Status Label */}
-      <span className={	racking-wider uppercase truncate \}>
+      <span className={`tracking-wider uppercase truncate ${getStatusColor()}`}>
         {getStatusText()}
       </span>
     </div>
