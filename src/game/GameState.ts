@@ -76,26 +76,27 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
     let avatar = defaultAvatars[color];
 
     if (mode === 'vs_computer') {
-      if (index === 0) {
+      if (color === firstColor) {
         name = authService.getCurrentUser()?.displayName || 'Player 1';
         avatar = authService.getCurrentUser()?.avatar || defaultAvatars[color];
       } else {
         isAi = true;
         name = `Bot ${color.charAt(0).toUpperCase() + color.slice(1)}`;
-        avatar = 'ðŸ¤–';
+        avatar = 'Ã°Å¸Â¤â€“';
       }
     } else if (mode === '2_player') {
-      if (index === 0) {
+      if (color === firstColor) {
         name = authService.getCurrentUser()?.displayName || 'Player 1';
         avatar = authService.getCurrentUser()?.avatar || defaultAvatars[color];
       }
-      name = index === 0 ? name : 'Player 2';
+      name = color === firstColor ? name : 'Player 2';
     } else if (mode === 'pass_and_play') {
-      if (index === 0) {
+      if (color === firstColor) {
         name = authService.getCurrentUser()?.displayName || 'Player 1';
         avatar = authService.getCurrentUser()?.avatar || defaultAvatars[color];
       } else {
-        name = `Player ${index + 1}`;
+        const turnOrderIndex = (index - activeColors.indexOf(firstColor) + activeColors.length) % activeColors.length;
+        name = `Player ${turnOrderIndex + 1}`;
       }
     } else if (mode === 'online_multiplayer') {
       isAi = false;
@@ -149,5 +150,7 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
     debugLog: null,
   };
 }
+
+
 
 
