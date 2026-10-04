@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { GameEngine } from '../game/GameEngine';
 import { GameMode, GameState } from '../types/game';
 import { Token } from '../types/token';
@@ -40,6 +40,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
   const actionQueueRef = useRef<any[]>([]);
   const isProcessingQueueRef = useRef(false);
+
+  useEffect(() => {
+    if (mode === 'online_multiplayer') {
+      if (gameId && localColor) {
+        const handleConnect = () => {
+          socketService.emitRejoinGame(gameId, localColor);
+        };
+        // Emit once in case we are already connected
+        socketService.emitRejoinGame(gameId, localColor);
+        socketService.onConnect(handleConnect);
+
+        return () => {
+          socketService.offConnect(handleConnect);
+        };
+      }
+    }
+  }, [mode, gameId, localColor]);
 
   useEffect(() => {
     if (mode === 'online_multiplayer') {

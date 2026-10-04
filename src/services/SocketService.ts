@@ -1,4 +1,4 @@
-import { io, Socket } from 'socket.io-client';
+﻿import { io, Socket } from 'socket.io-client';
 
 // Use the current hostname (e.g., local IP on phone) so other devices on network can connect
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || `http://${window.location.hostname}:3001`;
@@ -36,6 +36,18 @@ class SocketService {
     this.socket?.emit('leave_queue');
   }
 
+  public emitRejoinGame(gameId: string, color: string) {
+    this.socket?.emit('rejoin_game', { gameId, color });
+  }
+
+  public onConnect(callback: () => void) {
+    this.socket?.on('connect', callback);
+  }
+
+  public offConnect(callback: () => void) {
+    this.socket?.off('connect', callback);
+  }
+
   public emitGameAction(gameId: string, action: any) {
     this.socket?.emit('game_action', { gameId, ...action });
   }
@@ -57,4 +69,5 @@ class SocketService {
 }
 
 export const socketService = SocketService.getInstance();
+
 
