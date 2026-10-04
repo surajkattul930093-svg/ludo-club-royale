@@ -43,14 +43,17 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
   if (selectedColors.length > 0) {
     activeColors = selectedColors;
     if (mode === 'vs_computer') {
-      const all: PlayerColor[] = ['blue', 'yellow', 'green', 'red'];
-      activeColors = [selectedColors[0], ...all.filter(c => c !== selectedColors[0])];
+      activeColors = ['blue', 'yellow', 'green', 'red'];
     }
   } else {
     activeColors = mode === '2_player' ? ['blue', 'green'] : ['blue', 'yellow', 'green', 'red'];
   }
 
-  const firstColor = activeColors[0];
+  // Always keep standard clockwise turn order so TurnManager works correctly
+  const clockwise: PlayerColor[] = ['blue', 'yellow', 'green', 'red'];
+  activeColors.sort((a, b) => clockwise.indexOf(a) - clockwise.indexOf(b));
+
+  const firstColor = selectedColors.length > 0 ? selectedColors[0] : activeColors[0];
   const players = {} as Record<PlayerColor, Player>;
 
   const defaultNames = {
@@ -79,7 +82,7 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
       } else {
         isAi = true;
         name = `Bot ${color.charAt(0).toUpperCase() + color.slice(1)}`;
-        avatar = '🤖';
+        avatar = 'ðŸ¤–';
       }
     } else if (mode === '2_player') {
       if (index === 0) {
@@ -146,4 +149,5 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
     debugLog: null,
   };
 }
+
 
