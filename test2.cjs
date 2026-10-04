@@ -10,10 +10,38 @@
   console.log('Navigating...');
   await page.goto('http://localhost:3002/');
   
-  // wait 2 seconds
-  await new Promise(r => setTimeout(r, 2000));
+  await new Promise(r => setTimeout(r, 1000));
   
-  // Let's click the 4 Players (Pass & Play) button which directly starts a match
+  // Set localStorage to simulate saved profile
+  await page.evaluate(() => {
+    localStorage.setItem('ludo_device_id', 'test_device');
+  });
+
+  // We actually need to click the profile and save it to trigger updateProfile!
+  console.log('Clicking Profile...');
+  const buttons = await page.$$("button");
+  for (const btn of buttons) {
+    const text = await page.evaluate(el => el.textContent, btn);
+    if (text && text.includes('Profile')) {
+      await btn.click();
+      break;
+    }
+  }
+
+  await new Promise(r => setTimeout(r, 1000));
+
+  console.log('Clicking Save Profile...');
+  const saveBtns = await page.$$("button");
+  for (const btn of saveBtns) {
+    const text = await page.evaluate(el => el.textContent, btn);
+    if (text && text.includes('Save Profile')) {
+      await btn.click();
+      break;
+    }
+  }
+
+  await new Promise(r => setTimeout(r, 1000));
+
   console.log('Clicking Play Local Match...');
   const playLocal = await page.$$("button");
   for (const btn of playLocal) {
@@ -27,15 +55,15 @@
   await new Promise(r => setTimeout(r, 1000));
 
   console.log('Clicking 4 Players (Pass & Play)...');
-  const buttons = await page.$$("button");
-  for (const btn of buttons) {
+  const modes = await page.$$("button");
+  for (const btn of modes) {
     const text = await page.evaluate(el => el.textContent, btn);
     if (text && text.includes('4 Players (Pass & Play)')) {
       await btn.click();
       break;
     }
   }
-  
+
   await new Promise(r => setTimeout(r, 1000));
 
   console.log('Clicking Start Game...');

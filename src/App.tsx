@@ -7,6 +7,7 @@ import { AudioService } from './services/AudioService';
 
 type ScreenType = 'splash' | 'menu' | 'game';
 
+import { ErrorBoundary } from './components/ErrorBoundary';
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('splash');
   const [gameMode, setGameMode] = useState<GameMode>('pass_and_play');
@@ -32,6 +33,7 @@ export default function App() {
   };
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none">
       {currentScreen === 'splash' && (
         <SplashScreen onFinish={() => setCurrentScreen('menu')} />
@@ -61,6 +63,8 @@ export default function App() {
         />
       )}
     </div>
+    </ErrorBoundary>
   );
 }
+
 
