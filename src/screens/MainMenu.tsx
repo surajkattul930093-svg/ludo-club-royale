@@ -164,7 +164,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             fullWidth
             onClick={() => {
               setOnlineMatchMode(2);
-              setIsMatchmakingOpen(true);
+              setColorPickerMode('online_multiplayer');
             }}
           >
             <Globe className="w-4 h-4 text-sky-400" />
@@ -178,7 +178,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             fullWidth
             onClick={() => {
               setOnlineMatchMode(4);
-              setIsMatchmakingOpen(true);
+              setColorPickerMode('online_multiplayer');
             }}
           >
             <Globe className="w-4 h-4 text-emerald-400" />
@@ -364,6 +364,8 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
+
 
 
 
