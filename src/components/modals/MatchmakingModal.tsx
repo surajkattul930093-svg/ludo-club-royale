@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../common/Button';
 import { Globe, Users, X } from 'lucide-react';
 import { socketService } from '../../services/SocketService';
@@ -31,11 +31,11 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, on
       }, 1500);
     };
 
-    socketService.socket?.on(queue_update_, handleQueueUpdate);
+    socketService.socket?.on(`queue_update_${mode}`, handleQueueUpdate);
     socketService.socket?.on('match_found', handleMatchFound);
 
     return () => {
-      socketService.socket?.off(queue_update_, handleQueueUpdate);
+      socketService.socket?.off(`queue_update_${mode}`, handleQueueUpdate);
       socketService.socket?.off('match_found', handleMatchFound);
       if (!isMatchFound) {
         socketService.leaveMatchmaking();
