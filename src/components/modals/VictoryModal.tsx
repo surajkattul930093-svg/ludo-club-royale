@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Player, PlayerColor } from '../../types/player';
 import { AudioService } from '../../services/AudioService';
@@ -26,27 +26,25 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
       AudioService.getInstance().playWinSound();
 
       // Confetti burst
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
-      const timer = setTimeout(() => {
-        confetti({
-          particleCount: 80,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 },
-        });
-        confetti({
-          particleCount: 80,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 },
-        });
-      }, 350);
+      const duration = 5000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
 
-      return () => clearTimeout(timer);
+      const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+      const timer = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(timer);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+      }, 250);
+
+      return () => clearInterval(timer);
     }
   }, [winner]);
 
@@ -77,7 +75,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
         {/* Podium Card */}
         <div className="mt-5 p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80">
           <div className="flex items-center justify-center gap-3">
-            <PlayerAvatar avatar={winnerPlayer.avatar} color={winnerPlayer.color} size="lg" />
+            <PlayerAvatar avatar={winnerPlayer.avatar} name={winnerPlayer.name} color={winnerPlayer.color} size={64} isCurrentTurn={true} isAi={false} />
             <div className="text-left">
               <div className="font-extrabold text-sm text-slate-100">
                 {winnerPlayer.name}
@@ -117,4 +115,6 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
     </div>
   );
 };
+
+
 
