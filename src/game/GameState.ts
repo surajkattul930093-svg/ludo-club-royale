@@ -27,6 +27,14 @@ export function createInitialPlayer(
     finishedCount: 0,
     rank: null,
     status: isFirstPlayer ? 'READY' : 'WAITING',
+    connectionStatus: 'ONLINE',
+    coins: 0,
+    level: 1,
+    dice: {
+      playerId: `player_${color}`,
+      value: null,
+      state: 'IDLE',
+    }
   };
 }
 
