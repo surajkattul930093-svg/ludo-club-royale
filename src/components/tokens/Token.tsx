@@ -6,6 +6,7 @@ interface TokenProps {
   color: PlayerColor;
   isMovable?: boolean;
   isSelected?: boolean;
+  rotation?: number;
   onClick?: () => void;
   sizePercent?: number; // size relative to cell (e.g. 75%)
   offset?: { x: number; y: number };
@@ -55,6 +56,7 @@ export const Token: React.FC<TokenProps> = ({
   color,
   isMovable = false,
   isSelected = false,
+  rotation = 0,
   onClick,
   offset = { x: 0, y: 0 },
 }) => {
@@ -65,6 +67,7 @@ export const Token: React.FC<TokenProps> = ({
       onClick={isMovable ? onClick : undefined}
       style={{
         color: styles.glowColor,
+        
       }}
       className={`relative rounded-full aspect-square flex items-center justify-center select-none transition-transform duration-150 ${
         isMovable
@@ -74,6 +77,7 @@ export const Token: React.FC<TokenProps> = ({
     >
       {/* Outer Raised 3D Bevel Rim */}
       <div
+        style={{ transform: `rotate(${-rotation}deg)` }}
         className={`w-full h-full rounded-full p-[2.5px] border ${styles.outerRing} ${styles.shadow} flex items-center justify-center`}
       >
         {/* Deep Recessed Ring */}
@@ -95,10 +99,15 @@ export const Token: React.FC<TokenProps> = ({
 
       {/* Movable Crown/Sparkle Indicator */}
       {isMovable && (
-        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-amber-400 text-slate-950 font-black text-[9px] px-1 py-0.2 rounded-full border border-amber-200 shadow-md animate-bounce pointer-events-none whitespace-nowrap">
+        <div style={{ transform: `translate(-50%, 0) rotate(${-rotation}deg)`, top: rotation === 180 ? 'auto' : '-0.5rem', bottom: rotation === 180 ? '-0.5rem' : 'auto' }} className="absolute left-1/2 bg-amber-400 text-slate-950 font-black text-[9px] px-1 py-0.2 rounded-full border border-amber-200 shadow-md animate-bounce pointer-events-none whitespace-nowrap">
           TAP
         </div>
       )}
     </div>
   );
 };
+
+
+
+
+

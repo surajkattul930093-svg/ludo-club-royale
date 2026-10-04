@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { PlayerColor } from '../../types/player';
 import { Token as TokenType } from '../../types/token';
 import { AnimatingTokenInfo } from '../../types/game';
@@ -23,6 +23,7 @@ interface GameBoardProps {
   selectedTokenId: number | null;
   currentTurnColor: PlayerColor;
   debugBoard?: boolean;
+  boardRotation?: number;
   onTokenClick: (tokenId: number) => void;
 }
 
@@ -145,6 +146,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   selectedTokenId,
   currentTurnColor,
   debugBoard = false,
+  boardRotation = 0,
   onTokenClick,
 }) => {
   // Resolve current visual position for each token (accounting for real-time animatingToken)
@@ -777,7 +779,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                   }`}
                 >
                   <Token
-                    id={token.id}
+                      id={token.id}
+                      rotation={boardRotation}
                     color={token.color}
                     isMovable={isMovable}
                     isSelected={isSelected}
@@ -796,3 +799,4 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     </div>
   );
 };
+

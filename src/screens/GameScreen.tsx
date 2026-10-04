@@ -238,6 +238,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         isAnimating={isAnimating}
         debugMode={gameState.debugMode}
         debugBoard={gameState.debugBoard}
+              boardRotation={boardRotation}
         debugLog={gameState.debugLog}
         onToggleSound={onToggleSound}
         onToggleDebug={() => engine.toggleDebugMode()}
@@ -263,6 +264,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
               selectedTokenId={gameState.selectedTokenId}
               currentTurnColor={currentTurnColor}
               debugBoard={gameState.debugBoard}
+              boardRotation={boardRotation}
               onTokenClick={handleTokenClick} /></div>
           </div>
 
@@ -292,6 +294,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
 
 
 
