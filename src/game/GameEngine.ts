@@ -1,4 +1,4 @@
-import { GameMode, GameState, DebugMovementLog } from '../types/game';
+﻿import { GameMode, GameState, DebugMovementLog } from '../types/game';
 import { Player, PlayerColor, PlayerToken } from '../types/player';
 import { TokenState } from '../types/token';
 import { createInitialGameState } from './GameState';
@@ -253,7 +253,7 @@ export class GameEngine {
     const sequenceSummary = [
       startPos.cellId,
       ...movementQueue.map((s) => s.logicalPos.cellId),
-    ].join(' → ');
+    ].join(' â†’ ');
 
     const debugLog: DebugMovementLog = {
       dice: diceValue,
@@ -437,17 +437,17 @@ export class GameEngine {
         animatingToken: null,
         selectedTokenId: null,
         movableTokenIds: [],
-        lastActionMessage: `🏆 Game Over! ${this.state.players[winner].name} wins!`,
+        lastActionMessage: `ðŸ† Game Over! ${this.state.players[winner].name} wins!`,
       });
       return;
     }
 
     if (didCapture) {
-      bonusMsg = ` ⚔️ ${captureMessage} Bonus roll!`;
+      bonusMsg = ` âš”ï¸ ${captureMessage} Bonus roll!`;
     } else if (didFinishToken) {
-      bonusMsg = ` ⭐ Token reached HOME! Bonus roll!`;
+      bonusMsg = ` â­ Token reached HOME! Bonus roll!`;
     } else if (diceValue === 6) {
-      bonusMsg = ` 🎲 Rolled a 6! Bonus roll!`;
+      bonusMsg = ` ðŸŽ² Rolled a 6! Bonus roll!`;
     }
 
     // If bonus roll: Player stays active and ready to roll again!
@@ -623,6 +623,21 @@ export class GameEngine {
     return bestId;
   }
 
+
+  public setConnectionStatus(color: PlayerColor, status: 'ONLINE' | 'OFFLINE' | 'SLOW'): void {
+    const player = this.state.players[color];
+    if (!player || player.hasFinished) return;
+    this.updateState({
+      players: {
+        ...this.state.players,
+        [color]: {
+          ...player,
+          connectionStatus: status
+        }
+      }
+    });
+  }
+
   public removePlayer(color: PlayerColor): void {
     const player = this.state.players[color];
     if (!player || player.hasFinished) return;
@@ -674,3 +689,4 @@ export class GameEngine {
     }
   }
 }
+

@@ -128,6 +128,8 @@ io.on('connection', (socket: Socket) => {
       
       const playerKey = `${data.gameId}_${data.color}`;
       activePlayerSockets.set(playerKey, socket.id); // Update active socket!
+      
+      socket.to(data.gameId).emit('game_action', { type: 'PLAYER_ONLINE', color: data.color });
 
       if (disconnectTimers.has(playerKey)) {
         clearTimeout(disconnectTimers.get(playerKey));
@@ -155,17 +157,15 @@ io.on('connection', (socket: Socket) => {
   socket.on('disconnect', () => {
     console.log(`[-] User disconnected: ${socket.id}`);
     
-    // Handle player leaving mid-game with grace period
     const gameInfo = socketGameMap[socket.id];
     if (gameInfo) {
       const playerKey = `${gameInfo.roomId}_${gameInfo.color}`;
       
-      // CRITICAL: Only start the disconnect timer if this socket is STILL the active socket for this player.
-      // If they already reconnected on a new socket, activePlayerSockets[playerKey] will be different.
       if (activePlayerSockets.get(playerKey) === socket.id) {
         console.log(`[!] Starting 45s disconnect timer for ${playerKey}`);
+        io.to(gameInfo.roomId).emit('game_action', { type: 'PLAYER_OFFLINE', color: gameInfo.color });
+        
         const timer = setTimeout(() => {
-          // Double check they didn't reconnect during the 45 seconds
           if (activePlayerSockets.get(playerKey) === socket.id || !activePlayerSockets.has(playerKey)) {
             io.to(gameInfo.roomId).emit('game_action', { type: 'PLAYER_LEFT', color: gameInfo.color });
           }
@@ -174,7 +174,7 @@ io.on('connection', (socket: Socket) => {
         
         disconnectTimers.set(playerKey, timer);
       } else {
-        console.log(`[!] Ignoring disconnect for ${playerKey} because they already reconnected on a new socket.`);
+        console.log(`[!] Ignoring disconnect for ${playerKey} because they already reconnected.`);
       }
       
       delete socketGameMap[socket.id];

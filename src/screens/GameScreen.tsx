@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+﻿import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { GameEngine } from '../game/GameEngine';
 import { GameMode, GameState } from '../types/game';
 import { Token } from '../types/token';
@@ -85,6 +85,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         } else if (action.type === 'PLAYER_LEFT') {
           engine.removePlayer(action.color);
           setTimeout(processQueue, 100);
+        } else if (action.type === 'PLAYER_OFFLINE') {
+          engine.setConnectionStatus(action.color, 'OFFLINE');
+          setTimeout(processQueue, 100);
+        } else if (action.type === 'PLAYER_ONLINE') {
+          engine.setConnectionStatus(action.color, 'ONLINE');
+          setTimeout(processQueue, 100);
         } else {
           processQueue();
         }
@@ -159,6 +165,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     }
   };
 
+  const handleBackToMenu = () => {
+    if (mode === 'online_multiplayer') {
+      socketService.emitGameAction(gameId || '', { type: 'PLAYER_LEFT', color: localColor });
+    }
+    onBackToMenu();
+  };
+
   const handleRestart = () => {
     if (!gameState.isAnimating) {
       engine.restartGame(mode);
@@ -184,7 +197,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         onToggleDebug={() => engine.toggleDebugMode()}
         onToggleDebugBoard={() => engine.toggleDebugBoard()}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        onBackToMenu={onBackToMenu}
+        onBackToMenu={handleBackToMenu}
         onRestart={mode === 'online_multiplayer' ? undefined : handleRestart}
       />
 
@@ -268,7 +281,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         rankings={gameState.rankings}
         players={players}
         onPlayAgain={handleRestart}
-        onBackToMenu={onBackToMenu}
+        onBackToMenu={handleBackToMenu}
       />
 
       <SettingsModal
@@ -282,4 +295,5 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
 

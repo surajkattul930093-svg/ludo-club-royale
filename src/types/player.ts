@@ -1,4 +1,4 @@
-import { TokenState } from './token';
+﻿import { TokenState } from './token';
 
 export type PlayerColor = 'blue' | 'yellow' | 'green' | 'red';
 
@@ -39,8 +39,9 @@ export interface Player {
   finishedCount: number;
   rank: number | null;
   status: PlayerStatusType;
-  connectionStatus: 'ONLINE' | 'CONNECTING' | 'DISCONNECTED';
+  connectionStatus: 'ONLINE' | 'OFFLINE' | 'SLOW';
   coins: number;
   level: number;
   dice: PlayerDiceState;
 }
+
