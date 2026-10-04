@@ -227,8 +227,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 select-none overflow-x-hidden p-1 sm:p-2">
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[130px] pointer-events-none" />
+    <div className="relative min-h-screen w-full flex flex-col justify-between app-bg select-none overflow-x-hidden p-1 sm:p-2">
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-blue-600/10 app-bg-glow blur-[130px] pointer-events-none" />
 
       <GameHUD
         players={players}
@@ -292,6 +292,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
 
 
 

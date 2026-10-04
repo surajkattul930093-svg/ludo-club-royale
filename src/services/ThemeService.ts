@@ -1,9 +1,10 @@
-﻿type Theme = 'dark' | 'light';
+﻿export type Theme = 'dark' | 'light' | 'auto';
 
 class ThemeService {
   private static instance: ThemeService;
-  private currentTheme: Theme = 'dark';
+  private currentTheme: Theme = 'auto';
   private listeners: Set<(theme: Theme) => void> = new Set();
+  private intervalId: number | null = null;
 
   private constructor() {
     const saved = localStorage.getItem('ludo_theme') as Theme;
@@ -11,6 +12,13 @@ class ThemeService {
       this.currentTheme = saved;
     }
     this.applyTheme();
+
+    // Re-check auto theme every minute
+    this.intervalId = window.setInterval(() => {
+      if (this.currentTheme === 'auto') {
+        this.applyTheme();
+      }
+    }, 60000);
   }
 
   public static getInstance(): ThemeService {
@@ -24,15 +32,28 @@ class ThemeService {
     return this.currentTheme;
   }
 
-  public toggleTheme() {
-    this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+  public cycleTheme() {
+    if (this.currentTheme === 'dark') this.currentTheme = 'light';
+    else if (this.currentTheme === 'light') this.currentTheme = 'auto';
+    else this.currentTheme = 'dark';
+    
     localStorage.setItem('ludo_theme', this.currentTheme);
     this.applyTheme();
     this.notify();
   }
 
+  private isNightTime(): boolean {
+    const hour = new Date().getHours();
+    return hour >= 18 || hour < 6;
+  }
+
   private applyTheme() {
-    if (this.currentTheme === 'light') {
+    let effectiveTheme = this.currentTheme;
+    if (effectiveTheme === 'auto') {
+      effectiveTheme = this.isNightTime() ? 'dark' : 'light';
+    }
+
+    if (effectiveTheme === 'light') {
       document.documentElement.classList.add('theme-light');
     } else {
       document.documentElement.classList.remove('theme-light');
