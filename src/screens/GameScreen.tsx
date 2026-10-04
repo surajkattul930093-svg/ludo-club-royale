@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+﻿import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { GameEngine } from '../game/GameEngine';
 import { GameMode, GameState } from '../types/game';
 import { Token } from '../types/token';
@@ -36,17 +36,46 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   const [gameState, setGameState] = useState<GameState>(engine.getState());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  const actionQueueRef = useRef<any[]>([]);
+  const isProcessingQueueRef = useRef(false);
+
   useEffect(() => {
     if (mode === 'online_multiplayer') {
-      const handleRemoteAction = (action: any) => {
+      const processQueue = () => {
+        if (actionQueueRef.current.length === 0) {
+          isProcessingQueueRef.current = false;
+          return;
+        }
+
+        // Check if engine is currently busy animating
+        if (engine.getState().isAnimating) {
+          setTimeout(processQueue, 100);
+          return;
+        }
+
+        const action = actionQueueRef.current.shift();
         if (action.type === 'ROLL') {
           engine.rollDice(action.value);
+          // Give engine a moment to update state to animating/processing
+          setTimeout(processQueue, 100);
         } else if (action.type === 'MOVE') {
           engine.moveToken(action.tokenId, () => {
             AudioService.getInstance().playTokenMoveSound();
           });
+          setTimeout(processQueue, 100);
+        } else {
+          processQueue();
         }
       };
+
+      const handleRemoteAction = (action: any) => {
+        actionQueueRef.current.push(action);
+        if (!isProcessingQueueRef.current) {
+          isProcessingQueueRef.current = true;
+          processQueue();
+        }
+      };
+
       socketService.onGameAction(handleRemoteAction);
       return () => {
         socketService.offGameAction(handleRemoteAction);
@@ -66,7 +95,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     };
   }, [engine, soundEnabled, animationSpeed]);
 
-  // Extract all active tokens for the board with their logical state
   const allTokens: Token[] = useMemo(() => {
     const list: Token[] = [];
     for (const color of gameState.activeColors) {
@@ -119,10 +147,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
   return (
     <div className="relative min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-slate-950 via-[#071630] to-slate-950 text-slate-100 select-none overflow-x-hidden p-1 sm:p-2">
-      {/* Background ambient lighting */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[130px] pointer-events-none" />
 
-      {/* Top Utility Header & Status Banner */}
       <GameHUD
         players={players}
         currentTurnColor={currentTurnColor}
@@ -137,15 +163,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         onToggleDebugBoard={() => engine.toggleDebugBoard()}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onBackToMenu={onBackToMenu}
-        onRestart={handleRestart}
+        onRestart={mode === 'online_multiplayer' ? undefined : handleRestart}
       />
 
-      {/* Main Four-Player Ludo Table Layout */}
       <main className="w-full flex-1 flex flex-col items-center justify-center my-auto py-1">
         <div className="w-full max-w-[560px] flex flex-col items-center gap-1 sm:gap-2">
-          {/* TOP PLAYER ROW: Player 1 (Blue) and Player 2 (Yellow) */}
           <div className="w-full flex items-center justify-between px-1 gap-2">
-            {/* Top-Left: Blue Player */}
             {activeColors.includes('blue') && (
               <div className="flex-1 max-w-[48%]">
                 <PlayerSeat
@@ -158,8 +181,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({
                 />
               </div>
             )}
-
-            {/* Top-Right: Yellow Player */}
             {activeColors.includes('yellow') ? (
               <div className="flex-1 max-w-[48%]">
                 <PlayerSeat
@@ -176,7 +197,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({
             )}
           </div>
 
-          {/* CENTER: The Dominant Ludo Board */}
           <div className="w-full flex items-center justify-center">
             <GameBoard
               tokens={allTokens}
@@ -190,9 +210,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
             />
           </div>
 
-          {/* BOTTOM PLAYER ROW: Player 4 (Red) and Player 3 (Green) */}
           <div className="w-full flex items-center justify-between px-1 gap-2">
-            {/* Bottom-Left: Red Player */}
             {activeColors.includes('red') ? (
               <div className="flex-1 max-w-[48%]">
                 <PlayerSeat
@@ -207,8 +225,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({
             ) : (
               <div className="flex-1 max-w-[48%]" />
             )}
-
-            {/* Bottom-Right: Green Player */}
             {activeColors.includes('green') && (
               <div className="flex-1 max-w-[48%]">
                 <PlayerSeat
@@ -225,7 +241,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         </div>
       </main>
 
-      {/* Victory Celebration Modal */}
       <VictoryModal
         winner={gameState.winner}
         rankings={gameState.rankings}
@@ -234,7 +249,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         onBackToMenu={onBackToMenu}
       />
 
-      {/* Settings Modal */}
       <SettingsModal
         isOpen={isSettingsOpen}
         soundEnabled={soundEnabled}
@@ -246,5 +260,3 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
-
-

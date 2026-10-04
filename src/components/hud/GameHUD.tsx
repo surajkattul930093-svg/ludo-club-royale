@@ -18,7 +18,7 @@ interface GameHUDProps {
   onToggleDebugBoard: () => void;
   onOpenSettings: () => void;
   onBackToMenu: () => void;
-  onRestart: () => void;
+  onRestart?: () => void;
 }
 
 export const GameHUD: React.FC<GameHUDProps> = ({
@@ -74,7 +74,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
         </div>
 
         <div className="flex items-center gap-1">
-          <button
+          {onRestart && (<button
             onClick={onRestart}
             disabled={isAnimating}
             title="Restart Match"
@@ -82,7 +82,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
             aria-label="Restart match"
           >
             <RotateCcw className="w-4 h-4" />
-          </button>
+          </button>)}
           <button
             onClick={onToggleSound}
             title={soundEnabled ? 'Mute Sound' : 'Enable Sound'}
@@ -240,3 +240,4 @@ export const GameHUD: React.FC<GameHUDProps> = ({
     </div>
   );
 };
+
