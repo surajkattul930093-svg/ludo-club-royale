@@ -75,10 +75,10 @@ export const Token: React.FC<TokenProps> = ({
           : 'cursor-default'
       } ${isSelected ? 'ring-4 ring-white ring-offset-2 scale-110 z-40' : ''}`}
     >
-      {/* Outer Raised 3D Bevel Rim */}
+      {/* Outer Raised 3D Bevel Rim (Counter-rotated to keep contents upright) */}
       <div
         style={{ transform: `rotate(${-rotation}deg)` }}
-        className={`w-full h-full rounded-full p-[2.5px] border ${styles.outerRing} ${styles.shadow} flex items-center justify-center`}
+        className={`relative w-full h-full rounded-full p-[2.5px] border ${styles.outerRing} ${styles.shadow} flex items-center justify-center`}
       >
         {/* Deep Recessed Ring */}
         <div
@@ -95,17 +95,18 @@ export const Token: React.FC<TokenProps> = ({
             <div className="absolute bottom-[8%] right-[12%] w-[35%] h-[25%] bg-white/20 rounded-full blur-[1px] pointer-events-none" />
           </div>
         </div>
-      </div>
 
-      {/* Movable Crown/Sparkle Indicator */}
-      {isMovable && (
-        <div style={{ transform: `translate(-50%, 0) rotate(${-rotation}deg)`, top: rotation === 180 ? 'auto' : '-0.5rem', bottom: rotation === 180 ? '-0.5rem' : 'auto' }} className="absolute left-1/2 bg-amber-400 text-slate-950 font-black text-[9px] px-1 py-0.2 rounded-full border border-amber-200 shadow-md animate-bounce pointer-events-none whitespace-nowrap">
-          TAP
-        </div>
-      )}
+        {/* Movable Crown/Sparkle Indicator (Inside counter-rotated div so it always points UP) */}
+        {isMovable && (
+          <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-amber-400 text-slate-950 font-black text-[9px] px-1 py-0.2 rounded-full border border-amber-200 shadow-md animate-bounce pointer-events-none whitespace-nowrap z-50">
+            TAP
+          </div>
+        )}
+      </div>
     </div>
   );
 };
+
 
 
 
