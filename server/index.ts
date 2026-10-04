@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
@@ -120,9 +120,16 @@ io.on('connection', (socket: Socket) => {
   });
 
   socket.on('game_action', (data) => {
-    const rooms = Array.from(socket.rooms);
-    const gameRoom = rooms.find(r => r.startsWith('game_'));
+    let gameRoom = data.gameId;
+    if (!gameRoom) {
+      const rooms = Array.from(socket.rooms);
+      gameRoom = rooms.find(r => r.startsWith('game_'));
+    }
+
     if (gameRoom) {
+      if (!socket.rooms.has(gameRoom)) {
+        socket.join(gameRoom);
+      }
       socket.to(gameRoom).emit('game_action', data);
     }
   });

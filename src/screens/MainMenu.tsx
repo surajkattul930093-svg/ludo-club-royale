@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { GameMode } from '../types/game';
 import { Button } from '../components/common/Button';
 import {
@@ -24,7 +24,7 @@ import { useEffect } from 'react';
 import { PlayerColor } from '../types/player';
 
 interface MainMenuProps {
-  onStartGame: (mode: GameMode, colors: PlayerColor[], myColor?: PlayerColor) => void;
+  onStartGame: (mode: GameMode, colors: PlayerColor[], myColor?: PlayerColor, gameId?: string) => void;
   soundEnabled: boolean;
   animationSpeed: number;
   onToggleSound: () => void;
@@ -89,7 +89,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           className="flex items-center gap-2.5 text-left group cursor-pointer"
         >
           <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 border-2 border-amber-200 shadow-md flex items-center justify-center text-lg">
-            <span>👑</span>
+            <span>ðŸ‘‘</span>
             <span className="absolute -bottom-0.5 -right-0.5 bg-emerald-500 w-3 h-3 rounded-full border border-slate-900" />
           </div>
           <div>
@@ -97,7 +97,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
               {userProfile.displayName}
             </div>
             <div className="text-[10px] font-semibold text-slate-400">
-              Level 5 · Pro
+              Level 5 Â· Pro
             </div>
           </div>
         </button>
@@ -233,7 +233,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
       {/* Footer Info */}
       <footer className="relative z-10 w-full max-w-sm mx-auto text-center py-2 text-[11px] text-slate-500 font-medium">
-        <span>Production Ludo Engine · Android & iOS Ready</span>
+        <span>Production Ludo Engine Â· Android & iOS Ready</span>
       </footer>
 
       {/* Mode Selection Dialog */}
@@ -355,7 +355,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           mode={onlineMatchMode}
           onMatchFound={(gameId, color, activeColors) => {
             setIsMatchmakingOpen(false);
-            onStartGame('online_multiplayer', activeColors, color);
+            onStartGame('online_multiplayer', activeColors, color, gameId);
           }}
           onCancel={() => setIsMatchmakingOpen(false)}
         />
@@ -363,6 +363,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
 
 
 

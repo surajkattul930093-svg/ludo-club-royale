@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+﻿import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { GameEngine } from '../game/GameEngine';
 import { GameMode, GameState } from '../types/game';
 import { Token } from '../types/token';
@@ -15,6 +15,7 @@ interface GameScreenProps {
   mode: GameMode;
   selectedColors?: PlayerColor[];
   localColor?: PlayerColor | null;
+  gameId?: string | null;
   onBackToMenu: () => void;
   soundEnabled: boolean;
   animationSpeed: number;
@@ -26,6 +27,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   mode,
   selectedColors,
   localColor,
+  gameId,
   onBackToMenu,
   soundEnabled,
   animationSpeed,
@@ -123,7 +125,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
       if (mode === 'online_multiplayer' && localColor !== color) return;
       const val = engine.rollDice();
       if (mode === 'online_multiplayer') {
-        socketService.emitGameAction({ type: 'ROLL', color, value: val });
+        socketService.emitGameAction(gameId || '', { type: 'ROLL', color, value: val });
       }
     }
   };
@@ -135,7 +137,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         AudioService.getInstance().playTokenMoveSound();
       });
       if (mode === 'online_multiplayer') {
-        socketService.emitGameAction({ type: 'MOVE', tokenId });
+        socketService.emitGameAction(gameId || '', { type: 'MOVE', tokenId });
       }
     }
   };
@@ -263,3 +265,4 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+

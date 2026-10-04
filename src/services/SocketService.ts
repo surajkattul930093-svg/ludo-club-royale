@@ -36,8 +36,8 @@ class SocketService {
     this.socket?.emit('leave_queue');
   }
 
-  public emitGameAction(action: any) {
-    this.socket?.emit('game_action', action);
+  public emitGameAction(gameId: string, action: any) {
+    this.socket?.emit('game_action', { gameId, ...action });
   }
 
   public onGameAction(callback: (action: any) => void) {

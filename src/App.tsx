@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { GameMode } from './types/game';
 import { SplashScreen } from './screens/SplashScreen';
 import { MainMenu } from './screens/MainMenu';
@@ -15,6 +15,7 @@ export default function App() {
 
   const [selectedColors, setSelectedColors] = useState<PlayerColor[]>([]);
   const [localColor, setLocalColor] = useState<PlayerColor | null>(null);
+  const [gameId, setGameId] = useState<string | null>(null);
 
   const handleToggleSound = () => {
     const updated = !soundEnabled;
@@ -22,10 +23,11 @@ export default function App() {
     AudioService.getInstance().setSoundEnabled(updated);
   };
 
-  const handleStartGame = (mode: GameMode, colors: PlayerColor[] = [], myColor?: PlayerColor) => {
+  const handleStartGame = (mode: GameMode, colors: PlayerColor[] = [], myColor?: PlayerColor, gId?: string) => {
     setGameMode(mode);
     setSelectedColors(colors);
     setLocalColor(myColor || null);
+    setGameId(gId || null);
     setCurrentScreen('game');
   };
 
@@ -50,6 +52,7 @@ export default function App() {
           mode={gameMode}
           selectedColors={selectedColors}
           localColor={localColor}
+          gameId={gameId}
           onBackToMenu={() => setCurrentScreen('menu')}
           soundEnabled={soundEnabled}
           animationSpeed={animationSpeed}
@@ -60,3 +63,4 @@ export default function App() {
     </div>
   );
 }
+
