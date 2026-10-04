@@ -12,7 +12,7 @@ interface ColorSelectionModalProps {
 export const ColorSelectionModal: React.FC<ColorSelectionModalProps> = ({ mode, onConfirm, onCancel }) => {
   const [selectedColors, setSelectedColors] = useState<PlayerColor[]>([]);
 
-  const requiredCount = mode === 'vs_computer' ? 1 : mode === '2_player' ? 2 : 4;
+  const requiredCount = (mode === 'vs_computer' || mode === 'online_multiplayer') ? 1 : mode === '2_player' ? 2 : 4;
   const currentPlayer = selectedColors.length + 1;
 
   const handleSelect = (color: PlayerColor) => {
@@ -27,7 +27,7 @@ export const ColorSelectionModal: React.FC<ColorSelectionModalProps> = ({ mode, 
   };
 
   const getTitle = () => {
-    if (mode === 'vs_computer') return 'Select Your Color';
+    if (mode === 'vs_computer' || mode === 'online_multiplayer') return 'Select Your Color';
     return `Player ${currentPlayer}: Select Your Color`;
   };
 
@@ -87,4 +87,7 @@ export const ColorSelectionModal: React.FC<ColorSelectionModalProps> = ({ mode, 
     </div>
   );
 };
+
+
+
 

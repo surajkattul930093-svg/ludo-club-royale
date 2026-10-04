@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
@@ -69,8 +69,8 @@ const io = new Server(server, {
   pingTimeout: 7000,
 });
 
-let waitingPlayers2: { socketId: string; profile?: any; }[] = [];
-let waitingPlayers4: { socketId: string; profile?: any; }[] = [];
+let waitingPlayers2: { socketId: string; profile?: any; preferredColor?: string; }[] = [];
+let waitingPlayers4: { socketId: string; profile?: any; preferredColor?: string; }[] = [];
 const activeRooms: Record<string, { players: string[] }> = {};
 const socketGameMap: Record<string, { roomId: string, color: string }> = {};
 const activePlayerSockets = new Map<string, string>(); // roomId_color -> socket.id
@@ -79,14 +79,14 @@ const disconnectTimers = new Map<string, NodeJS.Timeout>();
 io.on('connection', (socket: Socket) => {
   console.log(`[+] User connected: ${socket.id}`);
 
-  socket.on('join_random_match', (data?: { mode: number, profile?: any }) => {
+  socket.on('join_random_match', (data?: { mode: number, profile?: any, preferredColor?: string }) => {
     const mode = data?.mode === 4 ? 4 : 2;
     console.log(`[Queue] Player joined ${mode}-player queue: ${socket.id}`);
     
     const queue = mode === 4 ? waitingPlayers4 : waitingPlayers2;
 
     if (!queue.find(p => p.socketId === socket.id)) {
-      queue.push({ socketId: socket.id, profile: data?.profile });
+      queue.push({ socketId: socket.id, profile: data?.profile, preferredColor: data?.preferredColor });
     }
 
     io.emit(`queue_update_${mode}`, { count: queue.length });
@@ -99,17 +99,35 @@ io.on('connection', (socket: Socket) => {
       activeRooms[gameId] = { players: matchPlayers.map(p => p.socketId) };
       const colors = ['blue', 'yellow', 'green', 'red'];
       
+      const assignedColors: Record<string, string> = {};
+      const availableColors = [...colors];
+
+      matchPlayers.forEach(p => {
+        if (p.preferredColor && availableColors.includes(p.preferredColor)) {
+          assignedColors[p.socketId] = p.preferredColor;
+          availableColors.splice(availableColors.indexOf(p.preferredColor), 1);
+        }
+      });
+
+      matchPlayers.forEach(p => {
+        if (!assignedColors[p.socketId]) {
+          assignedColors[p.socketId] = availableColors.pop() || 'blue';
+        }
+      });
+      
       matchPlayers.forEach((p, index) => {
-        socketGameMap[p.socketId] = { roomId: gameId, color: colors[index] };
-        activePlayerSockets.set(`${gameId}_${colors[index]}`, p.socketId);
+        const pColor = assignedColors[p.socketId];
+        socketGameMap[p.socketId] = { roomId: gameId, color: pColor };
+        activePlayerSockets.set(`${gameId}_${pColor}`, p.socketId);
 
         const playerSocket = io.sockets.sockets.get(p.socketId);
         if (playerSocket) {
           playerSocket.join(gameId);
           playerSocket.emit('match_found', {
             gameId: gameId,
-            assignedColor: colors[index],
-            players: matchPlayers.map((mp, i) => ({ id: mp.socketId, color: colors[i], profile: mp.profile }))
+            assignedColor: pColor,
+            activeColors: colors.slice(0, mode),
+            players: matchPlayers.map((mp, i) => ({ id: mp.socketId, color: assignedColors[mp.socketId], profile: mp.profile }))
           });
         }
       });
@@ -195,5 +213,6 @@ const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`ðŸš€ Multiplayer Server running on port ${PORT}`);
 });
+
 
 

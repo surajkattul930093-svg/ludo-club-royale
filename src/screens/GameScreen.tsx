@@ -197,6 +197,35 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
   const { players, currentTurnColor, activeColors, isAnimating } = gameState;
 
+  // Dynamic orientation logic
+  const targetBottomLeft = localColor || 'red';
+  const colorsClockwise: PlayerColor[] = ['blue', 'yellow', 'green', 'red'];
+  const targetIndex = colorsClockwise.indexOf(targetBottomLeft);
+  const offset = (3 - targetIndex + 4) % 4; // 0 for Red, 1 for Green, 2 for Yellow, 3 for Blue
+  const boardRotation = offset * 90;
+
+  const getPosColor = (screenIndex: number) => colorsClockwise[(screenIndex - offset + 4) % 4];
+  const topLeftColor = getPosColor(0);
+  const topRightColor = getPosColor(1);
+  const bottomRightColor = getPosColor(2);
+  const bottomLeftColor = getPosColor(3);
+
+  const renderSeat = (color: PlayerColor, position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right') => {
+    if (!activeColors.includes(color)) return <div className="flex-1 max-w-[48%]" />;
+    return (
+      <div className="flex-1 max-w-[48%]">
+        <PlayerSeat
+          player={players[color]}
+          position={position}
+          isCurrentTurn={currentTurnColor === color}
+          isAnimating={isAnimating}
+          debugVisuals={gameState.debugMode}
+          onRollDice={() => handleRollDice(color)}
+        />
+      </div>
+    );
+  };
+
   return (
     <div className="relative min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-slate-950 via-[#071630] to-slate-950 text-slate-100 select-none overflow-x-hidden p-1 sm:p-2">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[130px] pointer-events-none" />
@@ -221,36 +250,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({
       <main className="w-full flex-1 flex flex-col items-center justify-center my-auto py-1">
         <div className="w-full max-w-[560px] flex flex-col items-center gap-1 sm:gap-2">
           <div className="w-full flex items-center justify-between px-1 gap-2">
-            {activeColors.includes('blue') && (
-              <div className="flex-1 max-w-[48%]">
-                <PlayerSeat
-                  player={players.blue}
-                  position="top-left"
-                  isCurrentTurn={currentTurnColor === 'blue'}
-                  isAnimating={isAnimating}
-                  debugVisuals={gameState.debugMode}
-                  onRollDice={() => handleRollDice('blue')}
-                />
-              </div>
-            )}
-            {activeColors.includes('yellow') ? (
-              <div className="flex-1 max-w-[48%]">
-                <PlayerSeat
-                  player={players.yellow}
-                  position="top-right"
-                  isCurrentTurn={currentTurnColor === 'yellow'}
-                  isAnimating={isAnimating}
-                  debugVisuals={gameState.debugMode}
-                  onRollDice={() => handleRollDice('yellow')}
-                />
-              </div>
-            ) : (
-              <div className="flex-1 max-w-[48%]" />
-            )}
+            {renderSeat(topLeftColor, 'top-left')}
+            {renderSeat(topRightColor, 'top-right')}
           </div>
 
           <div className="w-full flex items-center justify-center">
-            <GameBoard
+            <div style={{ transform: `rotate(${boardRotation}deg)`, transition: 'transform 0.5s' }}><GameBoard
               tokens={allTokens}
               animatingToken={gameState.animatingToken}
               isAnimating={isAnimating}
@@ -258,37 +263,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({
               selectedTokenId={gameState.selectedTokenId}
               currentTurnColor={currentTurnColor}
               debugBoard={gameState.debugBoard}
-              onTokenClick={handleTokenClick}
-            />
+              onTokenClick={handleTokenClick} /></div>
           </div>
 
           <div className="w-full flex items-center justify-between px-1 gap-2">
-            {activeColors.includes('red') ? (
-              <div className="flex-1 max-w-[48%]">
-                <PlayerSeat
-                  player={players.red}
-                  position="bottom-left"
-                  isCurrentTurn={currentTurnColor === 'red'}
-                  isAnimating={isAnimating}
-                  debugVisuals={gameState.debugMode}
-                  onRollDice={() => handleRollDice('red')}
-                />
-              </div>
-            ) : (
-              <div className="flex-1 max-w-[48%]" />
-            )}
-            {activeColors.includes('green') && (
-              <div className="flex-1 max-w-[48%]">
-                <PlayerSeat
-                  player={players.green}
-                  position="bottom-right"
-                  isCurrentTurn={currentTurnColor === 'green'}
-                  isAnimating={isAnimating}
-                  debugVisuals={gameState.debugMode}
-                  onRollDice={() => handleRollDice('green')}
-                />
-              </div>
-            )}
+            {renderSeat(bottomLeftColor, 'bottom-left')}
+            {renderSeat(bottomRightColor, 'bottom-right')}
           </div>
         </div>
       </main>
@@ -312,6 +292,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
+
 
 
 

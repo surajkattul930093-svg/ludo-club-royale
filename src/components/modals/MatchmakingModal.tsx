@@ -7,18 +7,19 @@ import { PlayerColor } from '../../types/player';
 
 interface MatchmakingModalProps {
   mode?: 2 | 4;
+  preferredColor?: PlayerColor;
   onMatchFound: (gameId: string, assignedColor: PlayerColor, activeColors: PlayerColor[], players: any[]) => void;
   onCancel: () => void;
 }
 
-export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, onMatchFound, onCancel }) => {
+export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, preferredColor, onMatchFound, onCancel }) => {
   const [queueCount, setQueueCount] = useState(1);
   const [isMatchFound, setIsMatchFound] = useState(false);
   const REQUIRED_PLAYERS = mode;
 
   useEffect(() => {
     socketService.connect();
-    socketService.joinMatchmaking(mode, authService.getCurrentUser());
+    socketService.joinMatchmaking(mode, authService.getCurrentUser(), preferredColor);
 
     const handleQueueUpdate = (data: { count: number }) => {
       setQueueCount(data.count);
@@ -88,6 +89,8 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, on
     </div>
   );
 };
+
+
 
 
 

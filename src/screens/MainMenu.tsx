@@ -43,6 +43,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [playModePickerOpen, setPlayModePickerOpen] = useState(false);
   const [colorPickerMode, setColorPickerMode] = useState<GameMode | null>(null);
+  const [preferredColor, setPreferredColor] = useState<PlayerColor | undefined>(undefined);
   const [isMatchmakingOpen, setIsMatchmakingOpen] = useState(false);
   const [onlineMatchMode, setOnlineMatchMode] = useState<2 | 4>(2);
   const [userProfile, setUserProfile] = useState<UserProfile>(authService.getCurrentUser());
@@ -337,13 +338,22 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       {colorPickerMode && (
         <ColorSelectionModal
           mode={colorPickerMode}
-          onConfirm={(colors) => onStartGame(colorPickerMode, colors)}
+          onConfirm={(colors) => {
+              if (colorPickerMode === 'online_multiplayer') {
+                setPreferredColor(colors[0]);
+                setColorPickerMode(null);
+                setIsMatchmakingOpen(true);
+              } else {
+                onStartGame(colorPickerMode, colors);
+              }
+            }}
           onCancel={() => setColorPickerMode(null)}
         />
       )}
       {isMatchmakingOpen && (
         <MatchmakingModal
           mode={onlineMatchMode}
+            preferredColor={preferredColor}
           onMatchFound={(gameId, color, activeColors, players) => {
               setIsMatchmakingOpen(false);
               onStartGame('online_multiplayer', activeColors, color, gameId, players);
@@ -354,6 +364,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
 
 
 
