@@ -31,17 +31,12 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     let user = await User.findOne({ deviceId });
     if (!user) {
-      // Create new guest user
       const randomId = Math.floor(1000 + Math.random() * 9000);
-      user = new User({
-        deviceId,
-        username: 'Guest_' + randomId,
-      });
+      user = new User({ deviceId, username: 'Guest_' + randomId });
       await user.save();
     }
     res.json(user);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -68,48 +63,36 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*', // In production, restrict to your frontend domain
+    origin: '*',
     methods: ['GET', 'POST'],
   },
 });
 
-// Simple Matchmaking Queue
-// In memory: Array of socket ids waiting for a match
-let waitingPlayers: { socketId: string; }[] = [];
-
-// Room Data
+let waitingPlayers2: { socketId: string; }[] = [];
+let waitingPlayers4: { socketId: string; }[] = [];
 const activeRooms: Record<string, { players: string[] }> = {};
 
 io.on('connection', (socket: Socket) => {
-  console.log(`[+] User connected: ${socket.id}`);
+  console.log([+] User connected: );
 
-  // When a player clicks "Online Matchmaking"
-  socket.on('join_random_match', () => {
-    console.log(`[Queue] Player joined: ${socket.id}`);
+  socket.on('join_random_match', (data?: { mode: number }) => {
+    const mode = data?.mode === 4 ? 4 : 2;
+    console.log([Queue] Player joined -player queue: );
     
-    // Prevent double joining
-    if (!waitingPlayers.find(p => p.socketId === socket.id)) {
-      waitingPlayers.push({ socketId: socket.id });
+    const queue = mode === 4 ? waitingPlayers4 : waitingPlayers2;
+
+    if (!queue.find(p => p.socketId === socket.id)) {
+      queue.push({ socketId: socket.id });
     }
 
-    // Broadcast queue size to everyone waiting (for UI)
-    io.emit('queue_update', { count: waitingPlayers.length });
+    io.emit(`queue_update_${mode}`, { count: queue.length });
 
-    // Check if we have 4 players for a full match
-    // (For MVP testing, you can change this to 2 to test with 2 tabs)
-    const REQUIRED_PLAYERS = 2; 
-
-    if (waitingPlayers.length >= REQUIRED_PLAYERS) {
-      console.log(`[Matchmaking] Found enough players! Starting game...`);
-      
-      const matchPlayers = waitingPlayers.splice(0, REQUIRED_PLAYERS);
+    if (queue.length >= mode) {
+      console.log(`[Matchmaking] Found enough players for ${mode}p game!`);
+      const matchPlayers = queue.splice(0, mode);
       const gameId = `game_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
-      activeRooms[gameId] = {
-        players: matchPlayers.map(p => p.socketId)
-      };
-
-      // Assign colors and join room
+      activeRooms[gameId] = { players: matchPlayers.map(p => p.socketId) };
       const colors = ['blue', 'yellow', 'green', 'red'];
       
       matchPlayers.forEach((p, index) => {
@@ -119,27 +102,23 @@ io.on('connection', (socket: Socket) => {
           playerSocket.emit('match_found', {
             gameId,
             assignedColor: colors[index],
-            players: matchPlayers.map((mp, i) => ({
-              id: mp.socketId,
-              color: colors[i]
-            }))
+            players: matchPlayers.map((mp, i) => ({ id: mp.socketId, color: colors[i] }))
           });
         }
       });
-
-      // Update queue for remaining players
-      io.emit('queue_update', { count: waitingPlayers.length });
+      io.emit(`queue_update_${mode}`, { count: queue.length });
     }
   });
 
   socket.on('leave_queue', () => {
-    waitingPlayers = waitingPlayers.filter(p => p.socketId !== socket.id);
-    io.emit('queue_update', { count: waitingPlayers.length });
-    console.log(`[Queue] Player left: ${socket.id}`);
+    waitingPlayers2 = waitingPlayers2.filter(p => p.socketId !== socket.id);
+    waitingPlayers4 = waitingPlayers4.filter(p => p.socketId !== socket.id);
+    io.emit('queue_update_2', { count: waitingPlayers2.length });
+    io.emit('queue_update_4', { count: waitingPlayers4.length });
+    console.log([Queue] Player left: );
   });
 
   socket.on('game_action', (data) => {
-    // Broadcast to the room the socket is currently in (except itself)
     const rooms = Array.from(socket.rooms);
     const gameRoom = rooms.find(r => r.startsWith('game_'));
     if (gameRoom) {
@@ -148,19 +127,16 @@ io.on('connection', (socket: Socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log(`[-] User disconnected: ${socket.id}`);
-    // Remove from queue if they disconnect while waiting
-    waitingPlayers = waitingPlayers.filter(p => p.socketId !== socket.id);
-    io.emit('queue_update', { count: waitingPlayers.length });
-    
-    // TODO: Handle disconnection during an active match (replace with bot)
+    console.log([-] User disconnected: );
+    waitingPlayers2 = waitingPlayers2.filter(p => p.socketId !== socket.id);
+    waitingPlayers4 = waitingPlayers4.filter(p => p.socketId !== socket.id);
+    io.emit('queue_update_2', { count: waitingPlayers2.length });
+    io.emit('queue_update_4', { count: waitingPlayers4.length });
   });
 });
 
 const PORT = process.env.PORT || 3001;
-
 server.listen(PORT, () => {
-  console.log(`🚀 Multiplayer Server running on http://localhost:${PORT}`);
+  console.log(?? Multiplayer Server running on port );
 });
-
 

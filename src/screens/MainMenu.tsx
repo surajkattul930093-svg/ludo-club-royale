@@ -42,6 +42,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   const [playModePickerOpen, setPlayModePickerOpen] = useState(false);
   const [colorPickerMode, setColorPickerMode] = useState<GameMode | null>(null);
   const [isMatchmakingOpen, setIsMatchmakingOpen] = useState(false);
+  const [onlineMatchMode, setOnlineMatchMode] = useState<2 | 4>(2);
   const [userProfile, setUserProfile] = useState<UserProfile>(authService.getCurrentUser());
 
   useEffect(() => {
@@ -160,15 +161,32 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             Play Local Match
           </Button>
 
-          {/* ONLINE Matchmaking */}
+          {/* ONLINE Matchmaking 2P */}
           <Button
             variant="secondary"
             size="md"
             fullWidth
-            onClick={() => setIsMatchmakingOpen(true)}
+            onClick={() => {
+              setOnlineMatchMode(2);
+              setIsMatchmakingOpen(true);
+            }}
           >
             <Globe className="w-4 h-4 text-sky-400" />
-            Online Matchmaking
+            Online Match (2 Player)
+          </Button>
+
+          {/* ONLINE Matchmaking 4P */}
+          <Button
+            variant="secondary"
+            size="md"
+            fullWidth
+            onClick={() => {
+              setOnlineMatchMode(4);
+              setIsMatchmakingOpen(true);
+            }}
+          >
+            <Globe className="w-4 h-4 text-emerald-400" />
+            Online Match (4 Player)
           </Button>
 
           {/* PRIVATE ROOM */}
@@ -334,6 +352,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       )}
       {isMatchmakingOpen && (
         <MatchmakingModal
+          mode={onlineMatchMode}
           onMatchFound={(gameId, color, activeColors) => {
             setIsMatchmakingOpen(false);
             onStartGame('online_multiplayer', activeColors, color);
@@ -344,6 +363,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
 
 
 

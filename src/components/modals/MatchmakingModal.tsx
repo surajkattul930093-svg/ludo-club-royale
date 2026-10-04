@@ -1,25 +1,23 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Button } from '../common/Button';
 import { Globe, Users, X } from 'lucide-react';
 import { socketService } from '../../services/SocketService';
 import { PlayerColor } from '../../types/player';
 
 interface MatchmakingModalProps {
+  mode?: 2 | 4;
   onMatchFound: (gameId: string, assignedColor: PlayerColor, activeColors: PlayerColor[]) => void;
   onCancel: () => void;
 }
 
-export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ onMatchFound, onCancel }) => {
+export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, onMatchFound, onCancel }) => {
   const [queueCount, setQueueCount] = useState(1);
   const [isMatchFound, setIsMatchFound] = useState(false);
-  const REQUIRED_PLAYERS = 2; // Testing with 2 players for now
+  const REQUIRED_PLAYERS = mode;
 
   useEffect(() => {
-    // Connect to server
     socketService.connect();
-    
-    // Join queue
-    socketService.joinMatchmaking();
+    socketService.joinMatchmaking(mode);
 
     const handleQueueUpdate = (data: { count: number }) => {
       setQueueCount(data.count);
@@ -30,26 +28,25 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ onMatchFound
       const activeColors = data.players.map(p => p.color);
       setTimeout(() => {
         onMatchFound(data.gameId, data.assignedColor, activeColors);
-      }, 1500); // 1.5s delay to show "Match Found!" animation
+      }, 1500);
     };
 
-    socketService.socket?.on('queue_update', handleQueueUpdate);
+    socketService.socket?.on(queue_update_, handleQueueUpdate);
     socketService.socket?.on('match_found', handleMatchFound);
 
     return () => {
-      socketService.socket?.off('queue_update', handleQueueUpdate);
+      socketService.socket?.off(queue_update_, handleQueueUpdate);
       socketService.socket?.off('match_found', handleMatchFound);
       if (!isMatchFound) {
         socketService.leaveMatchmaking();
       }
     };
-  }, []);
+  }, [mode, isMatchFound]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-fade-in">
       <div className="bg-slate-900 border border-slate-700 rounded-3xl p-8 w-full max-w-sm shadow-2xl flex flex-col items-center animate-scale-in text-center relative overflow-hidden">
         
-        {/* Background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-blue-500/20 rounded-full blur-[60px] pointer-events-none" />
 
         {!isMatchFound ? (
@@ -60,7 +57,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ onMatchFound
 
             <h2 className="text-2xl font-black text-white mb-2">Finding Match</h2>
             <p className="text-sm text-slate-400 mb-8">
-              Searching for global opponents...
+              Searching for {REQUIRED_PLAYERS} global opponents...
             </p>
 
             <div className="w-full bg-slate-800 rounded-2xl p-4 border border-slate-700 mb-8 flex items-center justify-between">

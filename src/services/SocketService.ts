@@ -28,8 +28,8 @@ class SocketService {
     }
   }
 
-  public joinMatchmaking() {
-    this.socket?.emit('join_random_match');
+  public joinMatchmaking(mode: number = 2) {
+    this.socket?.emit('join_random_match', { mode });
   }
 
   public leaveMatchmaking() {
