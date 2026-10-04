@@ -1,4 +1,4 @@
-﻿import { GameMode, GameState, DebugMovementLog } from '../types/game';
+import { GameMode, GameState, DebugMovementLog } from '../types/game';
 import { Player, PlayerColor, PlayerToken } from '../types/player';
 import { TokenState } from '../types/token';
 import { createInitialGameState } from './GameState';
@@ -17,8 +17,8 @@ export class GameEngine {
   private animationTimer: any = null;
   private rollCounter: number = 0;
 
-  constructor(initialMode: GameMode = 'pass_and_play', selectedColors?: PlayerColor[], myColor?: PlayerColor) {
-    this.state = createInitialGameState(initialMode, selectedColors, myColor);
+  constructor(initialMode: GameMode = 'pass_and_play', selectedColors?: PlayerColor[], myColor?: PlayerColor, remotePlayers?: any[]) {
+    this.state = createInitialGameState(initialMode, selectedColors, myColor, remotePlayers);
     this.turnManager = new TurnManager(this.state.activeColors);
   }
 
@@ -689,5 +689,6 @@ export class GameEngine {
     }
   }
 }
+
 
 

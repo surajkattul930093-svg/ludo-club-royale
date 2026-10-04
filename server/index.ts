@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
@@ -69,8 +69,8 @@ const io = new Server(server, {
   pingTimeout: 7000,
 });
 
-let waitingPlayers2: { socketId: string; }[] = [];
-let waitingPlayers4: { socketId: string; }[] = [];
+let waitingPlayers2: { socketId: string; profile?: any; }[] = [];
+let waitingPlayers4: { socketId: string; profile?: any; }[] = [];
 const activeRooms: Record<string, { players: string[] }> = {};
 const socketGameMap: Record<string, { roomId: string, color: string }> = {};
 const activePlayerSockets = new Map<string, string>(); // roomId_color -> socket.id
@@ -79,14 +79,14 @@ const disconnectTimers = new Map<string, NodeJS.Timeout>();
 io.on('connection', (socket: Socket) => {
   console.log(`[+] User connected: ${socket.id}`);
 
-  socket.on('join_random_match', (data?: { mode: number }) => {
+  socket.on('join_random_match', (data?: { mode: number, profile?: any }) => {
     const mode = data?.mode === 4 ? 4 : 2;
     console.log(`[Queue] Player joined ${mode}-player queue: ${socket.id}`);
     
     const queue = mode === 4 ? waitingPlayers4 : waitingPlayers2;
 
     if (!queue.find(p => p.socketId === socket.id)) {
-      queue.push({ socketId: socket.id });
+      queue.push({ socketId: socket.id, profile: data?.profile });
     }
 
     io.emit(`queue_update_${mode}`, { count: queue.length });
@@ -109,7 +109,7 @@ io.on('connection', (socket: Socket) => {
           playerSocket.emit('match_found', {
             gameId: gameId,
             assignedColor: colors[index],
-            players: matchPlayers.map((mp, i) => ({ id: mp.socketId, color: colors[i] }))
+            players: matchPlayers.map((mp, i) => ({ id: mp.socketId, color: colors[i], profile: mp.profile }))
           });
         }
       });
@@ -193,6 +193,7 @@ io.on('connection', (socket: Socket) => {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`🚀 Multiplayer Server running on port ${PORT}`);
+  console.log(`ðŸš€ Multiplayer Server running on port ${PORT}`);
 });
+
 

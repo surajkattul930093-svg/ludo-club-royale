@@ -1,4 +1,4 @@
-﻿import { io, Socket } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 // Use the current hostname (e.g., local IP on phone) so other devices on network can connect
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || `http://${window.location.hostname}:3001`;
@@ -28,8 +28,8 @@ class SocketService {
     }
   }
 
-  public joinMatchmaking(mode: number = 2) {
-    this.socket?.emit('join_random_match', { mode });
+  public joinMatchmaking(mode: number = 2, profile?: any) {
+    this.socket?.emit('join_random_match', { mode, profile });
   }
 
   public leaveMatchmaking() {
@@ -69,5 +69,6 @@ class SocketService {
 }
 
 export const socketService = SocketService.getInstance();
+
 
 

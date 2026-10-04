@@ -344,16 +344,18 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       {isMatchmakingOpen && (
         <MatchmakingModal
           mode={onlineMatchMode}
-          onMatchFound={(gameId, color, activeColors) => {
-            setIsMatchmakingOpen(false);
-            onStartGame('online_multiplayer', activeColors, color, gameId);
-          }}
+          onMatchFound={(gameId, color, activeColors, players) => {
+              setIsMatchmakingOpen(false);
+              onStartGame('online_multiplayer', activeColors, color, gameId, players);
+            }}
           onCancel={() => setIsMatchmakingOpen(false)}
         />
       )}
     </div>
   );
 };
+
+
 
 
 

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Button } from '../common/Button';
 import { Globe, Users, X } from 'lucide-react';
 import { socketService } from '../../services/SocketService';
+import { authService } from '../../services/AuthService';
 import { PlayerColor } from '../../types/player';
 
 interface MatchmakingModalProps {
   mode?: 2 | 4;
-  onMatchFound: (gameId: string, assignedColor: PlayerColor, activeColors: PlayerColor[]) => void;
+  onMatchFound: (gameId: string, assignedColor: PlayerColor, activeColors: PlayerColor[], players: any[]) => void;
   onCancel: () => void;
 }
 
@@ -17,17 +18,17 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, on
 
   useEffect(() => {
     socketService.connect();
-    socketService.joinMatchmaking(mode);
+    socketService.joinMatchmaking(mode, authService.getCurrentUser());
 
     const handleQueueUpdate = (data: { count: number }) => {
       setQueueCount(data.count);
     };
 
-    const handleMatchFound = (data: { gameId: string; assignedColor: PlayerColor; players: {id: string, color: PlayerColor}[] }) => {
+    const handleMatchFound = (data: { gameId: string; assignedColor: PlayerColor; players: {id: string, color: PlayerColor, profile?: any}[] }) => {
       setIsMatchFound(true);
       const activeColors = data.players.map(p => p.color);
       setTimeout(() => {
-        onMatchFound(data.gameId, data.assignedColor, activeColors);
+        onMatchFound(data.gameId, data.assignedColor, activeColors, data.players);
       }, 1500);
     };
 
@@ -87,3 +88,5 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, on
     </div>
   );
 };
+
+

@@ -12,6 +12,7 @@ import { AudioService } from '../services/AudioService';
 import { socketService } from '../services/SocketService';
 
 interface GameScreenProps {
+  remotePlayers?: any[];
   mode: GameMode;
   selectedColors?: PlayerColor[];
   localColor?: PlayerColor | null;
@@ -33,8 +34,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   animationSpeed,
   onToggleSound,
   onChangeAnimationSpeed,
+  remotePlayers,
 }) => {
-  const engine = useMemo(() => new GameEngine(mode, selectedColors, localColor || undefined), [mode, selectedColors, localColor]);
+  const engine = useMemo(() => new GameEngine(mode, selectedColors, localColor || undefined, remotePlayers), [mode, selectedColors, localColor, remotePlayers]);
   const [gameState, setGameState] = useState<GameState>(engine.getState());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -310,6 +312,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
 
 
 

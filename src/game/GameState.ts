@@ -1,4 +1,4 @@
-﻿import { GameMode, GameState } from '../types/game';
+import { GameMode, GameState } from '../types/game';
 import { Player, PlayerColor } from '../types/player';
 import { PLAYER_START_INDEX } from './boardPath';
 import { authService } from '../services/AuthService';
@@ -33,13 +33,12 @@ export function createInitialPlayer(
     dice: {
       playerId: `player_${color}`,
       value: null,
-      state: 'IDLE',
+      state: isFirstPlayer ? 'READY' : 'IDLE',
     }
   };
 }
 
-export function createInitialGameState(mode: GameMode = 'pass_and_play', selectedColors: PlayerColor[] = [], myColor?: PlayerColor): GameState {
-  // If no selected colors provided, fallback to defaults
+export function createInitialGameState(mode: GameMode = 'pass_and_play', selectedColors: PlayerColor[] = [], myColor?: PlayerColor, remotePlayers?: any[]): GameState {
   let activeColors: PlayerColor[] = [];
   if (selectedColors.length > 0) {
     activeColors = selectedColors;
@@ -71,29 +70,37 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
   activeColors.forEach((color, index) => {
     let isAi = false;
     let name = defaultNames[color];
+    let avatar = defaultAvatars[color];
 
     if (mode === 'vs_computer' && index > 0) {
       isAi = true;
       name = `Bot ${color.charAt(0).toUpperCase() + color.slice(1)}`;
-    }
-
-    if (mode === '2_player') {
+      avatar = '🤖';
+    } else if (mode === '2_player') {
       name = index === 0 ? 'Player 1' : 'Player 2';
-    }
-
-    if (mode === 'pass_and_play') {
+    } else if (mode === 'pass_and_play') {
       name = `Player ${index + 1}`;
-    }
-
-    if (mode === 'online_multiplayer') {
-      name = `Online ${color.charAt(0).toUpperCase() + color.slice(1)}`;
+    } else if (mode === 'online_multiplayer') {
       isAi = false;
+      if (color === myColor) {
+        name = authService.getCurrentUser()?.displayName || `Online ${color.charAt(0).toUpperCase() + color.slice(1)}`;
+        avatar = authService.getCurrentUser()?.avatar || defaultAvatars[color];
+      } else {
+        const remoteProfile = remotePlayers?.find(p => p.color === color)?.profile;
+        if (remoteProfile) {
+          name = remoteProfile.username || remoteProfile.displayName || `Online ${color.charAt(0).toUpperCase() + color.slice(1)}`;
+          avatar = remoteProfile.avatar || defaultAvatars[color];
+        } else {
+          name = `Online ${color.charAt(0).toUpperCase() + color.slice(1)}`;
+          avatar = defaultAvatars[color];
+        }
+      }
     }
 
     players[color] = createInitialPlayer(
       color,
-      (color === myColor ? (authService.getCurrentUser()?.displayName || name) : name),
-      isAi ? '🤖' : (color === myColor ? (authService.getCurrentUser()?.avatar || defaultAvatars[color]) : defaultAvatars[color]),
+      name,
+      avatar,
       isAi,
       color === firstColor
     );
@@ -115,3 +122,4 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
     hasRolled: false,
   };
 }
+

@@ -17,6 +17,7 @@ export default function App() {
   const [selectedColors, setSelectedColors] = useState<PlayerColor[]>([]);
   const [localColor, setLocalColor] = useState<PlayerColor | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
+  const [remotePlayers, setRemotePlayers] = useState<any[]>([]);
 
   const handleToggleSound = () => {
     const updated = !soundEnabled;
@@ -24,11 +25,12 @@ export default function App() {
     AudioService.getInstance().setSoundEnabled(updated);
   };
 
-  const handleStartGame = (mode: GameMode, colors: PlayerColor[] = [], myColor?: PlayerColor, gId?: string) => {
+  const handleStartGame = (mode: GameMode, colors: PlayerColor[] = [], myColor?: PlayerColor, gId?: string, players?: any[]) => {
     setGameMode(mode);
     setSelectedColors(colors);
     setLocalColor(myColor || null);
     setGameId(gId || null);
+    setRemotePlayers(players || []);
     setCurrentScreen('game');
   };
 
@@ -52,6 +54,7 @@ export default function App() {
       {currentScreen === 'game' && (
         <GameScreen
           mode={gameMode}
+          remotePlayers={remotePlayers}
           selectedColors={selectedColors}
           localColor={localColor}
           gameId={gameId}
@@ -66,5 +69,6 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
