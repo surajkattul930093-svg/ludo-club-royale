@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
@@ -40,12 +40,14 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 app.post('/api/user/update', async (req, res) => {
-  const { deviceId, coins, won } = req.body;
+  const { deviceId, coins, won, username, avatar } = req.body;
   try {
     const user = await User.findOne({ deviceId });
     if (user) {
       if (coins !== undefined) user.coins = coins;
       if (won) user.gamesWon += 1;
+      if (username) user.username = username;
+      if (avatar) user.avatar = avatar;
       await user.save();
       res.json(user);
     } else {

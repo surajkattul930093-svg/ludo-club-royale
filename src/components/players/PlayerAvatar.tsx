@@ -41,6 +41,7 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
   size = 40,
 }) => {
   const styles = COLOR_BORDER[color];
+  const isUrl = avatar?.startsWith('http');
 
   return (
     <div className="relative select-none shrink-0" style={{ width: `${size}px`, height: `${size}px` }}>
@@ -54,7 +55,11 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
       >
         {/* Avatar Interior */}
         <div className="w-full h-full rounded-full bg-gradient-to-br from-slate-800 to-slate-950 flex items-center justify-center overflow-hidden">
-          <span className="text-base sm:text-lg leading-none">{avatar}</span>
+          {isUrl ? (
+            <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-base sm:text-lg leading-none">{avatar}</span>
+          )}
         </div>
       </div>
 

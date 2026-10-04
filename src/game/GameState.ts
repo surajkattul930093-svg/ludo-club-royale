@@ -1,6 +1,8 @@
-import { GameMode, GameState } from '../types/game';
+﻿import { GameMode, GameState } from '../types/game';
 import { Player, PlayerColor } from '../types/player';
 import { PLAYER_START_INDEX } from './boardPath';
+
+import { authService } from '../services/AuthService';
 
 export function createInitialPlayer(
   color: PlayerColor,
@@ -93,7 +95,7 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
     players[color] = createInitialPlayer(
       color,
       name,
-      isAi ? 'dY -' : defaultAvatars[color],
+      isAi ? '🤖' : (color === myColor ? (authService.getCurrentUser()?.avatar || defaultAvatars[color]) : defaultAvatars[color]),
       isAi,
       color === firstColor
     );
@@ -125,4 +127,6 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
     debugLog: null,
   };
 }
+
+
 

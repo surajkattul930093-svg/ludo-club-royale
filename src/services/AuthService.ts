@@ -81,6 +81,31 @@ class AuthService {
     this.notifySubscribers();
   }
 
+
+  public async updateProfile(displayName: string, avatar: string) {
+    if (!this.currentUser) return;
+    
+    // Optimistic local update
+    this.currentUser.displayName = displayName;
+    this.currentUser.username = displayName;
+    this.currentUser.avatar = avatar;
+    this.notifySubscribers();
+
+    try {
+      await fetch(`${SERVER_URL}/api/user/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          deviceId: this.currentUser.deviceId || this.currentUser.uid,
+          username: displayName,
+          avatar: avatar 
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to sync profile with server:', error);
+    }
+  }
+
   public async updateCoins(amountToAdd: number, wonGame: boolean = false) {
     if (!this.currentUser) return;
     
@@ -134,4 +159,5 @@ class AuthService {
 }
 
 export const authService = AuthService.getInstance();
+
 

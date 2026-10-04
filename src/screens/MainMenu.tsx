@@ -19,6 +19,7 @@ import { SettingsModal } from '../components/modals/SettingsModal';
 import { FeaturePlaceholderModal } from '../components/modals/FeaturePlaceholderModal';
 import { ColorSelectionModal } from '../components/modals/ColorSelectionModal';
 import { MatchmakingModal } from '../components/modals/MatchmakingModal';
+import { ProfileModal } from '../components/modals/ProfileModal';
 import { authService, UserProfile } from '../services/AuthService';
 import { useEffect } from 'react';
 import { PlayerColor } from '../types/player';
@@ -80,24 +81,23 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       <header className="relative z-10 w-full max-w-lg mx-auto flex items-center justify-between p-3 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-800 shadow-lg">
         {/* User Profile Capsule */}
         <button
-          onClick={() =>
-            openPlaceholder(
-              'Player Profile',
-              'View stats, customize tokens, unlock dice skins, and track match achievements. Coming in Phase 2!'
-            )
-          }
+          onClick={() => setIsProfileOpen(true)}
           className="flex items-center gap-2.5 text-left group cursor-pointer"
         >
-          <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 border-2 border-amber-200 shadow-md flex items-center justify-center text-lg">
-            <span>ðŸ‘‘</span>
+          <div className="relative w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 shadow-md flex items-center justify-center text-lg overflow-hidden">
+            {userProfile?.avatar?.startsWith('http') ? (
+              <img src={userProfile.avatar} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-xl font-bold">{userProfile?.avatar || '?'}</span>
+            )}
             <span className="absolute -bottom-0.5 -right-0.5 bg-emerald-500 w-3 h-3 rounded-full border border-slate-900" />
           </div>
           <div>
-            <div className="text-xs font-black text-white group-hover:text-amber-400 transition-colors">
-              {userProfile.displayName}
+            <div className="text-xs font-black text-white group-hover:text-amber-400 transition-colors truncate max-w-[100px]">
+              {userProfile?.displayName || userProfile?.username}
             </div>
             <div className="text-[10px] font-semibold text-slate-400">
-              Level 5 Â· Pro
+              Lv {userProfile?.level || 1}
             </div>
           </div>
         </button>
@@ -106,21 +106,15 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700/80 shadow-inner">
             <Coins className="w-4 h-4 text-amber-400 fill-amber-400" />
-            <span className="text-xs font-black text-amber-300 font-mono">
-              {userProfile.coins.toLocaleString()}
+            <span className="text-xs font-black text-white">
+              {userProfile?.coins?.toLocaleString() || 0}
             </span>
           </div>
-
           <button
             onClick={onToggleSound}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-            aria-label="Toggle sound"
+            className="p-1.5 rounded-full hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors"
           >
-            {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-emerald-400" />
-            ) : (
-              <VolumeX className="w-4 h-4 text-slate-400" />
-            )}
+            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </button>
         </div>
       </header>
@@ -208,12 +202,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* Secondary Buttons Row */}
           <div className="grid grid-cols-2 gap-2.5 mt-1">
             <button
-              onClick={() =>
-                openPlaceholder(
-                  'Player Profile',
-                  'Customize your display name, avatars, and check win rates.'
-                )
-              }
+              onClick={() => setIsProfileOpen(true)}
               className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:bg-slate-800 text-xs font-bold text-slate-200 transition-colors cursor-pointer"
             >
               <User className="w-4 h-4 text-amber-400" />
@@ -325,6 +314,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       )}
 
       {/* Settings Modal */}
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
       <SettingsModal
         isOpen={isSettingsOpen}
         soundEnabled={soundEnabled}
@@ -363,6 +353,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
+
+
+
+
+
 
 
 
