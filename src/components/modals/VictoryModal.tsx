@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Player, PlayerColor } from '../../types/player';
 import { AudioService } from '../../services/AudioService';
 import { Button } from '../common/Button';
 import { Trophy, RotateCcw, Home } from 'lucide-react';
+import { PlayerAvatar } from '../players/PlayerAvatar';
 
 interface VictoryModalProps {
   winner: PlayerColor | null;
@@ -76,7 +77,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
         {/* Podium Card */}
         <div className="mt-5 p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80">
           <div className="flex items-center justify-center gap-3">
-            <span className="text-3xl">{winnerPlayer.avatar}</span>
+            <PlayerAvatar avatar={winnerPlayer.avatar} color={winnerPlayer.color} size="lg" />
             <div className="text-left">
               <div className="font-extrabold text-sm text-slate-100">
                 {winnerPlayer.name}
@@ -116,3 +117,4 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
     </div>
   );
 };
+
