@@ -1,0 +1,6 @@
+{
+  "name": "Ludo Club Royale",
+  "description": "Premium online multiplayer Ludo game foundation with responsive board, local game engine, and mobile-first experience.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
