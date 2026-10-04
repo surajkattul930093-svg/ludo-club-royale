@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
 import { GameMode } from './types/game';
+import { PlayerColor } from './types/player';
 import { SplashScreen } from './screens/SplashScreen';
 import { MainMenu } from './screens/MainMenu';
 import { GameScreen } from './screens/GameScreen';
@@ -69,6 +70,7 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
 

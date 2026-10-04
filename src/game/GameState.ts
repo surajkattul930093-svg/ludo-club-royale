@@ -72,14 +72,28 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
     let name = defaultNames[color];
     let avatar = defaultAvatars[color];
 
-    if (mode === 'vs_computer' && index > 0) {
-      isAi = true;
-      name = `Bot ${color.charAt(0).toUpperCase() + color.slice(1)}`;
-      avatar = '🤖';
+    if (mode === 'vs_computer') {
+      if (index === 0) {
+        name = authService.getCurrentUser()?.displayName || 'Player 1';
+        avatar = authService.getCurrentUser()?.avatar || defaultAvatars[color];
+      } else {
+        isAi = true;
+        name = `Bot ${color.charAt(0).toUpperCase() + color.slice(1)}`;
+        avatar = '🤖';
+      }
     } else if (mode === '2_player') {
-      name = index === 0 ? 'Player 1' : 'Player 2';
+      if (index === 0) {
+        name = authService.getCurrentUser()?.displayName || 'Player 1';
+        avatar = authService.getCurrentUser()?.avatar || defaultAvatars[color];
+      }
+      name = index === 0 ? name : 'Player 2';
     } else if (mode === 'pass_and_play') {
-      name = `Player ${index + 1}`;
+      if (index === 0) {
+        name = authService.getCurrentUser()?.displayName || 'Player 1';
+        avatar = authService.getCurrentUser()?.avatar || defaultAvatars[color];
+      } else {
+        name = `Player ${index + 1}`;
+      }
     } else if (mode === 'online_multiplayer') {
       isAi = false;
       if (color === myColor) {
@@ -109,17 +123,27 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
   return {
     gameId: 'game_' + Date.now(),
     mode,
+    status: 'idle',
     players,
     activeColors,
-    currentTurn: firstColor,
-    diceValue: 1,
-    isRolling: false,
-    canRoll: true,
-    message: `${players[firstColor].name}'s turn! Roll the dice.`,
+    currentTurnColor: firstColor,
+    currentPlayerId: players[firstColor].id,
+    diceValue: null,
+    isDiceRolling: false,
+    consecutiveSixes: 0,
+    turnNumber: 1,
     winner: null,
     rankings: [],
-    consecutiveSixes: 0,
-    hasRolled: false,
+    movableTokenIds: [],
+    selectedTokenId: null,
+    lastActionMessage: `${players[firstColor].name}'s turn! Roll the dice.`,
+    soundEnabled: true,
+    animationSpeed: 180,
+    isAnimating: false,
+    animatingToken: null,
+    debugMode: false,
+    debugBoard: false,
+    debugLog: null,
   };
 }
 

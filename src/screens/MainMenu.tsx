@@ -25,7 +25,7 @@ import { useEffect } from 'react';
 import { PlayerColor } from '../types/player';
 
 interface MainMenuProps {
-  onStartGame: (mode: GameMode, colors: PlayerColor[], myColor?: PlayerColor, gameId?: string) => void;
+  onStartGame: (mode: GameMode, colors: PlayerColor[], myColor?: PlayerColor, gameId?: string, players?: any[]) => void;
   soundEnabled: boolean;
   animationSpeed: number;
   onToggleSound: () => void;
@@ -354,6 +354,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
 
 
 

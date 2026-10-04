@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { PlayerColor, PlayerStatusType } from '../../types/player';
 import { Wifi, WifiOff, Loader } from 'lucide-react';
 
@@ -46,9 +46,9 @@ export const PlayerStatus: React.FC<PlayerStatusProps> = ({
           className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.8)] shrink-0"
         />
       ) : connectionStatus === 'SLOW' ? (
-        <Wifi className="w-2.5 h-2.5 text-amber-400 shrink-0" title="Slow Network" />
+        <Wifi className="w-2.5 h-2.5 text-amber-400 shrink-0"  />
       ) : (
-        <WifiOff className="w-2.5 h-2.5 text-red-500 shrink-0" title="Offline" />
+        <WifiOff className="w-2.5 h-2.5 text-red-500 shrink-0"  />
       )}
 
       {/* Contextual Status Label */}
@@ -58,3 +58,4 @@ export const PlayerStatus: React.FC<PlayerStatusProps> = ({
     </div>
   );
 };
+

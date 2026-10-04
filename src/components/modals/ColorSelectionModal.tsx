@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { PlayerColor } from '../../types/player';
 import { GameMode } from '../../types/game';
 import { Button } from '../common/Button';
@@ -80,10 +80,11 @@ export const ColorSelectionModal: React.FC<ColorSelectionModalProps> = ({ mode, 
           })}
         </div>
 
-        <Button variant="ghost" fullWidth onClick={onCancel} className="text-sm">
+        <Button variant="secondary" fullWidth onClick={onCancel} className="text-sm">
           Cancel
         </Button>
       </div>
     </div>
   );
 };
+

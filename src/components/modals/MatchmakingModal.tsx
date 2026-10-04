@@ -69,7 +69,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, on
               <span className="text-lg font-black text-blue-400">{queueCount} / {REQUIRED_PLAYERS}</span>
             </div>
 
-            <Button variant="ghost" fullWidth onClick={() => { socketService.leaveMatchmaking(); onCancel(); }} className="text-slate-400 hover:text-white">
+            <Button variant="secondary" fullWidth onClick={() => { socketService.leaveMatchmaking(); onCancel(); }} className="text-slate-400 hover:text-white">
               Cancel Search
             </Button>
           </>
@@ -88,5 +88,6 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, on
     </div>
   );
 };
+
 
 
