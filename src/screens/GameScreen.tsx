@@ -59,6 +59,21 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   }, [mode, gameId, localColor]);
 
   useEffect(() => {
+    if (mode === 'online_multiplayer' && gameId && localColor) {
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          socketService.emitGameAction(gameId, { type: 'PLAYER_OFFLINE', color: localColor });
+        } else {
+          socketService.emitGameAction(gameId, { type: 'PLAYER_ONLINE', color: localColor });
+          socketService.emitRejoinGame(gameId, localColor);
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }
+  }, [mode, gameId, localColor]);
+
+  useEffect(() => {
     if (mode === 'online_multiplayer') {
       const processQueue = () => {
         if (actionQueueRef.current.length === 0) {
@@ -295,5 +310,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
 
 

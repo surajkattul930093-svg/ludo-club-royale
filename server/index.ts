@@ -63,6 +63,8 @@ const io = new Server(server, {
     origin: '*',
     methods: ['GET', 'POST'],
   },
+  pingInterval: 3000,
+  pingTimeout: 7000,
 });
 
 let waitingPlayers2: { socketId: string; }[] = [];
@@ -191,3 +193,4 @@ const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`🚀 Multiplayer Server running on port ${PORT}`);
 });
+
