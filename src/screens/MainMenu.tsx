@@ -23,6 +23,7 @@ import { ProfileModal } from '../components/modals/ProfileModal';
 import { authService, UserProfile } from '../services/AuthService';
 import { useEffect } from 'react';
 import { PlayerColor } from '../types/player';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 interface MainMenuProps {
   onStartGame: (mode: GameMode, colors: PlayerColor[], myColor?: PlayerColor, gameId?: string, players?: any[]) => void;
@@ -74,7 +75,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-slate-950 via-[#061838] to-slate-950 p-4 sm:p-6 text-slate-100 select-none overflow-x-hidden">
+    <div className="relative min-h-screen w-full flex flex-col justify-between bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 text-slate-100 select-none overflow-x-hidden">
       {/* Background Subtle Radial Elements */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-blue-500/10 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-10 left-10 w-72 h-72 rounded-full bg-amber-500/10 blur-[100px] pointer-events-none" />
@@ -106,6 +107,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
         {/* Currency & Audio Quick Toggle */}
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700/80 shadow-inner">
             <Coins className="w-4 h-4 text-amber-400 fill-amber-400" />
             <span className="text-xs font-black text-white">
@@ -364,6 +366,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     </div>
   );
 };
+
+
+
 
 
 

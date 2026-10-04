@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Sparkles, Play } from 'lucide-react';
 import { AudioService } from '../services/AudioService';
 
@@ -32,7 +32,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   return (
     <div
       onClick={handleSkip}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-between p-8 bg-gradient-to-b from-slate-950 via-[#071630] to-slate-950 select-none cursor-pointer overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-between p-8 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 select-none cursor-pointer overflow-hidden"
     >
       {/* Background Ambient Glows */}
       <div className="absolute top-1/4 -left-20 w-72 h-72 rounded-full bg-blue-600/20 blur-3xl pointer-events-none" />
@@ -66,7 +66,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 
           {/* Golden Crown badge */}
           <div className="absolute -top-3 -right-3 text-2xl animate-bounce">
-            👑
+            ðŸ‘‘
           </div>
         </div>
 
@@ -94,3 +94,4 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
     </div>
   );
 };
+

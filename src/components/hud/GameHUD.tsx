@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Player, PlayerColor } from '../../types/player';
 import { DebugMovementLog } from '../../types/game';
 import { getLogicalPosition } from '../../game/boardPath';
+import { ThemeToggle } from '../common/ThemeToggle';
 import { Volume2, VolumeX, Settings, ArrowLeft, RotateCcw, Bug, Eye, EyeOff } from 'lucide-react';
 
 interface GameHUDProps {
@@ -95,8 +96,9 @@ export const GameHUD: React.FC<GameHUDProps> = ({
               <VolumeX className="w-4 h-4 text-slate-400" />
             )}
           </button>
-          <button
-            onClick={onOpenSettings}
+          <ThemeToggle />
+            <button
+              onClick={onOpenSettings}
             disabled={isAnimating}
             title="Game Settings"
             className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-300 hover:text-white transition-colors cursor-pointer"
@@ -136,7 +138,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
                     : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200'
                 }`}
               >
-                TOKENS {showTokensList ? '▲' : '▼'}
+                TOKENS {showTokensList ? 'â–²' : 'â–¼'}
               </button>
             </div>
           </div>
@@ -162,7 +164,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
                 <span className="text-amber-400 font-bold">Movement:</span> {debugLog.pathSequence}
               </div>
               <div className="text-emerald-400 font-bold text-[10.5px]">
-                ✓ EXACT MATCH: Traversed {debugLog.stepCount} cells (Dice = {debugLog.dice})
+                âœ“ EXACT MATCH: Traversed {debugLog.stepCount} cells (Dice = {debugLog.dice})
               </div>
             </div>
           ) : (
@@ -240,4 +242,5 @@ export const GameHUD: React.FC<GameHUDProps> = ({
     </div>
   );
 };
+
 
