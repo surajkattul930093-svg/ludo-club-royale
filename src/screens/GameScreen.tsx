@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { GameEngine } from '../game/GameEngine';
 import { GameMode, GameState } from '../types/game';
 import { Token } from '../types/token';
@@ -62,6 +62,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({
           engine.moveToken(action.tokenId, () => {
             AudioService.getInstance().playTokenMoveSound();
           });
+          setTimeout(processQueue, 100);
+        } else if (action.type === 'PLAYER_LEFT') {
+          engine.removePlayer(action.color);
           setTimeout(processQueue, 100);
         } else {
           processQueue();

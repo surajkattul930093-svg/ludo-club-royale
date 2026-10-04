@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
@@ -58,7 +58,6 @@ app.post('/api/user/update', async (req, res) => {
   }
 });
 
-
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -71,13 +70,14 @@ const io = new Server(server, {
 let waitingPlayers2: { socketId: string; }[] = [];
 let waitingPlayers4: { socketId: string; }[] = [];
 const activeRooms: Record<string, { players: string[] }> = {};
+const socketGameMap: Record<string, { roomId: string, color: string }> = {};
 
 io.on('connection', (socket: Socket) => {
-  console.log([+] User connected: );
+  console.log(`[+] User connected: ${socket.id}`);
 
   socket.on('join_random_match', (data?: { mode: number }) => {
     const mode = data?.mode === 4 ? 4 : 2;
-    console.log([Queue] Player joined -player queue: );
+    console.log(`[Queue] Player joined ${mode}-player queue: ${socket.id}`);
     
     const queue = mode === 4 ? waitingPlayers4 : waitingPlayers2;
 
@@ -96,11 +96,12 @@ io.on('connection', (socket: Socket) => {
       const colors = ['blue', 'yellow', 'green', 'red'];
       
       matchPlayers.forEach((p, index) => {
+        socketGameMap[p.socketId] = { roomId: gameId, color: colors[index] };
         const playerSocket = io.sockets.sockets.get(p.socketId);
         if (playerSocket) {
           playerSocket.join(gameId);
           playerSocket.emit('match_found', {
-            gameId,
+            gameId: gameId,
             assignedColor: colors[index],
             players: matchPlayers.map((mp, i) => ({ id: mp.socketId, color: colors[i] }))
           });
@@ -115,7 +116,7 @@ io.on('connection', (socket: Socket) => {
     waitingPlayers4 = waitingPlayers4.filter(p => p.socketId !== socket.id);
     io.emit('queue_update_2', { count: waitingPlayers2.length });
     io.emit('queue_update_4', { count: waitingPlayers4.length });
-    console.log([Queue] Player left: );
+    console.log(`[Queue] Player left: ${socket.id}`);
   });
 
   socket.on('game_action', (data) => {
@@ -127,7 +128,15 @@ io.on('connection', (socket: Socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log([-] User disconnected: );
+    console.log(`[-] User disconnected: ${socket.id}`);
+    
+    // Handle player leaving mid-game
+    const gameInfo = socketGameMap[socket.id];
+    if (gameInfo) {
+      io.to(gameInfo.roomId).emit('game_action', { type: 'PLAYER_LEFT', color: gameInfo.color });
+      delete socketGameMap[socket.id];
+    }
+
     waitingPlayers2 = waitingPlayers2.filter(p => p.socketId !== socket.id);
     waitingPlayers4 = waitingPlayers4.filter(p => p.socketId !== socket.id);
     io.emit('queue_update_2', { count: waitingPlayers2.length });
@@ -137,6 +146,5 @@ io.on('connection', (socket: Socket) => {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(?? Multiplayer Server running on port );
+  console.log(`🚀 Multiplayer Server running on port ${PORT}`);
 });
-

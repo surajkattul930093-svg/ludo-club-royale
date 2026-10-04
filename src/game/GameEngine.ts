@@ -622,4 +622,55 @@ export class GameEngine {
 
     return bestId;
   }
+
+  public removePlayer(color: PlayerColor): void {
+    const player = this.state.players[color];
+    if (!player || player.hasFinished) return;
+
+    // Reset tokens to HOME so they don't block others
+    const resetTokens = player.tokens.map(t => ({
+       ...t,
+       state: 'HOME' as const,
+       stepsFromStart: 0,
+       pathIndex: null
+    }));
+
+    let updatedPlayers = {
+      ...this.state.players,
+      [color]: {
+        ...player,
+        tokens: resetTokens,
+        hasFinished: true,
+        status: 'FINISHED' as const,
+        name: player.name + ' (Left)'
+      }
+    };
+
+    const activeRemaining = this.state.activeColors.filter(c => !updatedPlayers[c].hasFinished);
+    
+    if (activeRemaining.length === 1) {
+      const winner = activeRemaining[0];
+      this.updateState({
+        players: updatedPlayers,
+        status: 'game_over',
+        winner,
+        rankings: [...this.state.rankings, winner],
+        isAnimating: false,
+        animatingToken: null,
+        selectedTokenId: null,
+        movableTokenIds: [],
+        lastActionMessage: `${player.name} left. ${updatedPlayers[winner].name} wins!`
+      });
+      return;
+    }
+
+    this.updateState({
+      players: updatedPlayers,
+      lastActionMessage: `${player.name} left the game.`
+    });
+
+    if (this.state.currentTurnColor === color) {
+      this.nextTurn();
+    }
+  }
 }
