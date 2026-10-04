@@ -1,7 +1,6 @@
 ﻿import { GameMode, GameState } from '../types/game';
 import { Player, PlayerColor } from '../types/player';
 import { PLAYER_START_INDEX } from './boardPath';
-
 import { authService } from '../services/AuthService';
 
 export function createInitialPlayer(
@@ -28,18 +27,10 @@ export function createInitialPlayer(
     finishedCount: 0,
     rank: null,
     status: isFirstPlayer ? 'READY' : 'WAITING',
-    connectionStatus: 'ONLINE',
-    coins: 2500,
-    level: 5,
-    dice: {
-      playerId: `player_${color}`,
-      value: null,
-      state: isFirstPlayer ? 'READY' : 'IDLE',
-    },
   };
 }
 
-export function createInitialGameState(mode: GameMode = 'pass_and_play', selectedColors: PlayerColor[] = []): GameState {
+export function createInitialGameState(mode: GameMode = 'pass_and_play', selectedColors: PlayerColor[] = [], myColor?: PlayerColor): GameState {
   // If no selected colors provided, fallback to defaults
   let activeColors: PlayerColor[] = [];
   if (selectedColors.length > 0) {
@@ -53,7 +44,6 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
   }
 
   const firstColor = activeColors[0];
-
   const players = {} as Record<PlayerColor, Player>;
 
   const defaultNames = {
@@ -94,7 +84,7 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
 
     players[color] = createInitialPlayer(
       color,
-      name,
+      (color === myColor ? (authService.getCurrentUser()?.displayName || name) : name),
       isAi ? '🤖' : (color === myColor ? (authService.getCurrentUser()?.avatar || defaultAvatars[color]) : defaultAvatars[color]),
       isAi,
       color === firstColor
@@ -104,29 +94,16 @@ export function createInitialGameState(mode: GameMode = 'pass_and_play', selecte
   return {
     gameId: 'game_' + Date.now(),
     mode,
-    status: 'idle',
     players,
     activeColors,
-    currentTurnColor: firstColor,
-    currentPlayerId: players[firstColor].id,
-    diceValue: null,
-    isDiceRolling: false,
-    consecutiveSixes: 0,
-    turnNumber: 1,
+    currentTurn: firstColor,
+    diceValue: 1,
+    isRolling: false,
+    canRoll: true,
+    message: `${players[firstColor].name}'s turn! Roll the dice.`,
     winner: null,
     rankings: [],
-    movableTokenIds: [],
-    selectedTokenId: null,
-    lastActionMessage: `Game started! ${firstColor.charAt(0).toUpperCase() + firstColor.slice(1)} rolls first.`,
-    soundEnabled: true,
-    animationSpeed: 180,
-    isAnimating: false,
-    animatingToken: null,
-    debugMode: false,
-    debugBoard: false,
-    debugLog: null,
+    consecutiveSixes: 0,
+    hasRolled: false,
   };
 }
-
-
-

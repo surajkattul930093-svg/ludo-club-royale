@@ -34,7 +34,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   onToggleSound,
   onChangeAnimationSpeed,
 }) => {
-  const engine = useMemo(() => new GameEngine(mode, selectedColors), [mode, selectedColors]);
+  const engine = useMemo(() => new GameEngine(mode, selectedColors, localColor || undefined), [mode, selectedColors, localColor]);
   const [gameState, setGameState] = useState<GameState>(engine.getState());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -310,6 +310,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
 
 
 

@@ -17,8 +17,8 @@ export class GameEngine {
   private animationTimer: any = null;
   private rollCounter: number = 0;
 
-  constructor(initialMode: GameMode = 'pass_and_play', selectedColors?: PlayerColor[]) {
-    this.state = createInitialGameState(initialMode, selectedColors);
+  constructor(initialMode: GameMode = 'pass_and_play', selectedColors?: PlayerColor[], myColor?: PlayerColor) {
+    this.state = createInitialGameState(initialMode, selectedColors, myColor);
     this.turnManager = new TurnManager(this.state.activeColors);
   }
 
@@ -689,4 +689,5 @@ export class GameEngine {
     }
   }
 }
+
 
