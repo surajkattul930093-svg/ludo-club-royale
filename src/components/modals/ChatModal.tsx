@@ -7,7 +7,20 @@ interface ChatModalProps {
   onSend: (text: string, isEmoji: boolean) => void;
 }
 
-const EMOJIS = ['\u{1F602}', '\u{1F621}', '\u{1F62D}', '\u{1F929}', '\u{1F44D}', '\u{1F44E}', '\u{1F973}', '\u{1F631}', '\u{1F92B}', '\u{1F60E}', '\u{1F61C}', '\u{1F92C}'];
+const EMOJIS = [
+  { id: '1f602', char: '\u{1F602}' },
+  { id: '1f621', char: '\u{1F621}' },
+  { id: '1f62d', char: '\u{1F62D}' },
+  { id: '1f929', char: '\u{1F929}' },
+  { id: '1f44d', char: '\u{1F44D}' },
+  { id: '1f44e', char: '\u{1F44E}' },
+  { id: '1f973', char: '\u{1F973}' },
+  { id: '1f631', char: '\u{1F631}' },
+  { id: '1f92b', char: '\u{1F92B}' },
+  { id: '1f60e', char: '\u{1F60E}' },
+  { id: '1f61c', char: '\u{1F61C}' },
+  { id: '1f92c', char: '\u{1F92C}' }
+];
 const MESSAGES = [
   'Well played!',
   'Oops!',
@@ -50,11 +63,11 @@ export const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, onSend })
             <div className="grid grid-cols-4 gap-3">
               {EMOJIS.map(emoji => (
                 <button
-                  key={emoji}
-                  onClick={() => { onSend(emoji, true); onClose(); }}
-                  className="text-3xl bg-slate-800/50 hover:bg-slate-700 border border-slate-700 rounded-xl p-2 transition-all hover:scale-110 active:scale-95"
+                  key={emoji.id}
+                  onClick={() => { onSend(emoji.id, true); onClose(); }}
+                  className="bg-slate-800/50 hover:bg-slate-700 border border-slate-700 rounded-xl p-2 transition-all hover:scale-110 active:scale-95 flex items-center justify-center"
                 >
-                  {emoji}
+                  <img src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${emoji.id}/512.gif`} alt={emoji.char} className="w-12 h-12" />
                 </button>
               ))}
             </div>
