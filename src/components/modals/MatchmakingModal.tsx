@@ -55,7 +55,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
   };
 
   const opponentAvatar = isMatchFound 
-    ? (foundPlayers.find(p => p.id !== currentUser?.id)?.profile?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`)
+    ? (foundPlayers.find(p => p.id !== socketService.socket?.id)?.profile?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`)
     : null;
 
   return (
@@ -126,7 +126,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
                 </div>
               </div>
               <span className="mt-2 text-white font-bold drop-shadow-md min-h-[1.5rem]">
-                {isMatchFound ? (foundPlayers.find(p => p.id !== currentUser?.id)?.profile?.displayName || 'Opponent') : '???'}
+                {isMatchFound ? (foundPlayers.find(p => p.id !== socketService.socket?.id)?.profile?.displayName || 'Opponent') : '???'}
               </span>
             </div>
 
@@ -166,3 +166,4 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     </div>
   );
 };
+
