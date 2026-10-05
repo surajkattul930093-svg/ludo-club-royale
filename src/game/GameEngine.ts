@@ -651,7 +651,10 @@ export class GameEngine {
   }
 
   public showChat(color: PlayerColor, text: string, isEmoji: boolean): void {
-    if (this.state.soundEnabled) AudioService.getInstance().playButtonSound();
+    if (this.state.soundEnabled) {
+      if (isEmoji) AudioService.getInstance().playEmojiSound(text);
+      else AudioService.getInstance().playButtonSound();
+    }
     const player = this.state.players[color];
     if (!player) return;
     this.updateState({
@@ -716,6 +719,7 @@ export class GameEngine {
     }
   }
 }
+
 
 
 

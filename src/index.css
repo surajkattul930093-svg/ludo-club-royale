@@ -276,3 +276,35 @@
 .animate-chat-bubble {
   animation: chat-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, chat-fade 3s linear forwards;
 }
+@keyframes emoji-laugh {
+  0% { transform: scale(1) translateY(0); }
+  25% { transform: scale(1.3) translateY(-5px) rotate(10deg); }
+  50% { transform: scale(1.3) translateY(5px) rotate(-10deg); }
+  75% { transform: scale(1.3) translateY(-5px) rotate(10deg); }
+  100% { transform: scale(1.3) translateY(0) rotate(0deg); }
+}
+@keyframes emoji-angry {
+  0% { transform: scale(1) translateX(0); }
+  25% { transform: scale(1.4) translateX(-4px); }
+  50% { transform: scale(1.4) translateX(4px); }
+  75% { transform: scale(1.4) translateX(-4px); }
+  100% { transform: scale(1.4) translateX(0); }
+}
+@keyframes emoji-cry {
+  0% { transform: scale(1) translateY(0); }
+  25% { transform: scale(1.2) translateY(5px) rotate(-5deg); }
+  50% { transform: scale(1.2) translateY(2px) rotate(5deg); }
+  75% { transform: scale(1.2) translateY(5px) rotate(-5deg); }
+  100% { transform: scale(1.2) translateY(0); }
+}
+@keyframes emoji-wow {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.5) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+.emoji-laugh { animation: emoji-laugh 0.5s ease-in-out infinite; }
+.emoji-angry { animation: emoji-angry 0.2s linear infinite; filter: drop-shadow(0 0 10px red); }
+.emoji-cry { animation: emoji-cry 0.6s ease-in-out infinite; filter: drop-shadow(0 5px 5px rgba(0,100,255,0.5)); }
+.emoji-wow { animation: emoji-wow 1s ease-in-out infinite; }
+.emoji-default { animation: emoji-laugh 0.8s ease-in-out infinite; }

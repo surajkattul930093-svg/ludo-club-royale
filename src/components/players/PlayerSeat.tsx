@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Player, PlayerColor } from '../../types/player';
 import { PlayerAvatar } from './PlayerAvatar';
 import { PlayerStatus } from './PlayerStatus';
@@ -78,7 +78,7 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
             {player.activeChat && (
         <div key={player.activeChat.id} className={`absolute z-50 animate-chat-bubble ${isRightSide ? 'right-10 top-[-30px]' : 'left-10 top-[-30px]'}`}>
           <div className={`bg-white border-2 border-slate-200 rounded-2xl px-3 py-1.5 shadow-xl ${isRightSide ? 'rounded-br-none' : 'rounded-bl-none'}`}>
-            <span className={`text-slate-900 font-bold ${player.activeChat.isEmoji ? 'text-3xl' : 'text-sm'}`}>
+            <span className={`text-slate-900 font-bold ${player.activeChat.isEmoji ? 'text-4xl inline-block ' + (['😂','😜','🥳'].includes(player.activeChat.text) ? 'emoji-laugh' : ['😡','🤬'].includes(player.activeChat.text) ? 'emoji-angry' : ['😭','😱'].includes(player.activeChat.text) ? 'emoji-cry' : ['🤩','😎'].includes(player.activeChat.text) ? 'emoji-wow' : 'emoji-default') : 'text-sm'}`}>
               {player.activeChat.text}
             </span>
           </div>
@@ -157,6 +157,8 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
     </div>
   );
 };
+
+
 
 
 
