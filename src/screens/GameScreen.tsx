@@ -8,6 +8,7 @@ import { GameHUD } from '../components/hud/GameHUD';
 import { PlayerSeat } from '../components/players/PlayerSeat';
 import { VictoryModal } from '../components/modals/VictoryModal';
 import { SettingsModal } from '../components/modals/SettingsModal';
+import { ChatModal } from '../components/modals/ChatModal';
 import { AudioService } from '../services/AudioService';
 import { socketService } from '../services/SocketService';
 
@@ -40,6 +41,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   const [gameState, setGameState] = useState<GameState>(engine.getState());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSpectating, setIsSpectating] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const actionQueueRef = useRef<any[]>([]);
   const isProcessingQueueRef = useRef(false);
@@ -105,6 +107,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({
           setTimeout(processQueue, 100);
         } else if (action.type === 'PLAYER_OFFLINE') {
           engine.setConnectionStatus(action.color, 'OFFLINE');
+          setTimeout(processQueue, 100);
+} else if (action.type === 'CHAT') {
+          engine.showChat(action.color, action.text, action.isEmoji);
           setTimeout(processQueue, 100);
         } else if (action.type === 'PLAYER_ONLINE') {
           engine.setConnectionStatus(action.color, 'ONLINE');
@@ -191,6 +196,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     onBackToMenu();
   };
 
+  const handleSendChat = (text: string, isEmoji: boolean) => {
+    const myColor = localColor || currentTurnColor;
+    engine.showChat(myColor, text, isEmoji);
+    if (mode === 'online_multiplayer') {
+      socketService.emitGameAction(gameId || '', { type: 'CHAT', color: myColor, text, isEmoji });
+    }
+  };
+
   const handleRestart = () => {
     setIsSpectating(false);
     if (!gameState.isAnimating) {
@@ -247,6 +260,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         onToggleDebug={() => engine.toggleDebugMode()}
         onToggleDebugBoard={() => engine.toggleDebugBoard()}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenChat={() => setIsChatOpen(true)}
         onBackToMenu={handleBackToMenu}
         onRestart={mode === 'online_multiplayer' ? undefined : handleRestart}
       />
@@ -290,6 +304,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
       />
       )}
 
+      <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} onSend={handleSendChat} />
       <SettingsModal
         isOpen={isSettingsOpen}
         soundEnabled={soundEnabled}
@@ -301,6 +316,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
+
 
 
 

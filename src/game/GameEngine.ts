@@ -650,6 +650,21 @@ export class GameEngine {
     });
   }
 
+  public showChat(color: PlayerColor, text: string, isEmoji: boolean): void {
+    if (this.state.soundEnabled) AudioService.getInstance().playButtonSound();
+    const player = this.state.players[color];
+    if (!player) return;
+    this.updateState({
+      players: {
+        ...this.state.players,
+        [color]: {
+          ...player,
+          activeChat: { text, isEmoji, timestamp: Date.now(), id: Math.random().toString() }
+        }
+      }
+    });
+  }
+
   public removePlayer(color: PlayerColor): void {
     const player = this.state.players[color];
     if (!player || player.hasFinished) return;
@@ -701,6 +716,8 @@ export class GameEngine {
     }
   }
 }
+
+
 
 
 

@@ -75,6 +75,15 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
       } ${isRightSide ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}
     >
       {/* Player Avatar */}
+            {player.activeChat && (
+        <div key={player.activeChat.id} className={`absolute z-50 animate-chat-bubble ${isRightSide ? 'right-10 top-[-30px]' : 'left-10 top-[-30px]'}`}>
+          <div className={`bg-white border-2 border-slate-200 rounded-2xl px-3 py-1.5 shadow-xl ${isRightSide ? 'rounded-br-none' : 'rounded-bl-none'}`}>
+            <span className={`text-slate-900 font-bold ${player.activeChat.isEmoji ? 'text-3xl' : 'text-sm'}`}>
+              {player.activeChat.text}
+            </span>
+          </div>
+        </div>
+      )}
       <PlayerAvatar
         avatar={player.avatar}
         name={player.name}
@@ -148,5 +157,8 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
     </div>
   );
 };
+
+
+
 
 

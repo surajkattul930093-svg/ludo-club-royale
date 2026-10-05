@@ -43,5 +43,7 @@ export interface Player {
   coins: number;
   level: number;
   dice: PlayerDiceState;
+  activeChat?: { text: string, isEmoji: boolean, timestamp: number, id: string };
 }
+
 

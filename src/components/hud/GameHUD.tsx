@@ -3,7 +3,7 @@ import { Player, PlayerColor } from '../../types/player';
 import { DebugMovementLog } from '../../types/game';
 import { getLogicalPosition } from '../../game/boardPath';
 import { ThemeToggle } from '../common/ThemeToggle';
-import { Volume2, VolumeX, Settings, ArrowLeft, RotateCcw, Bug, Eye, EyeOff } from 'lucide-react';
+import { Volume2, VolumeX, Settings, ArrowLeft, RotateCcw, Bug, Eye, EyeOff, MessageCircle } from 'lucide-react';
 
 interface GameHUDProps {
   players: Record<PlayerColor, Player>;
@@ -20,6 +20,7 @@ interface GameHUDProps {
   onOpenSettings: () => void;
   onBackToMenu: () => void;
   onRestart?: () => void;
+  onOpenChat?: () => void;
 }
 
 export const GameHUD: React.FC<GameHUDProps> = ({
@@ -37,6 +38,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
   onOpenSettings,
   onBackToMenu,
   onRestart,
+  onOpenChat,
 }) => {
   const currentPlayer = players[currentTurnColor];
   const [showTokensList, setShowTokensList] = useState(false);
@@ -97,6 +99,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
             )}
           </button>
           <ThemeToggle />
+          <button onClick={onOpenChat} className="p-1.5 rounded-full hover:bg-slate-800 transition-colors"><MessageCircle className="w-5 h-5 text-blue-400" /></button>
             <button
               onClick={onOpenSettings}
             disabled={isAnimating}
@@ -242,5 +245,6 @@ export const GameHUD: React.FC<GameHUDProps> = ({
     </div>
   );
 };
+
 
 
