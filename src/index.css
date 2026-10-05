@@ -224,7 +224,7 @@
   100% { transform: rotateX(360deg) rotateY(360deg); }
 }
 .animate-dice-spin-wild {
-  animation: dice-spin-wild 0.4s linear infinite;
+  animation: dice-spin-wild 1s linear infinite;
   transform-style: preserve-3d;
 }
 @keyframes dice-stop {
@@ -235,4 +235,5 @@
   animation: dice-stop 1s cubic-bezier(0.15, 0.85, 0.3, 1.1) forwards;
   transform-style: preserve-3d;
 }
+
 

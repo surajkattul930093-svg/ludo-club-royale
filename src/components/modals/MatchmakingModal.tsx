@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { socketService } from '../../services/SocketService';
 import { authService } from '../../services/AuthService';
 import { PlayerColor } from '../../types/player';
@@ -80,32 +80,32 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
               
               {/* Front - Target Avatar */}
               <div className="dice-face bg-slate-200 [transform:translateZ(32px)] sm:[transform:translateZ(40px)] overflow-hidden">
-                <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} alt={name} className="w-full h-full object-cover" />
+                <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} alt={name} className="w-full h-full object-contain p-1.5" />
               </div>
               
               {/* Back */}
               <div className="dice-face bg-slate-200 [transform:rotateY(180deg)_translateZ(32px)] sm:[transform:rotateY(180deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[1]} className="w-full h-full object-cover" />
+                <img src={dummyAvatars[1]} className="w-full h-full object-contain p-1.5" />
               </div>
               
               {/* Right */}
               <div className="dice-face bg-slate-200 [transform:rotateY(90deg)_translateZ(32px)] sm:[transform:rotateY(90deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[2]} className="w-full h-full object-cover" />
+                <img src={dummyAvatars[2]} className="w-full h-full object-contain p-1.5" />
               </div>
               
               {/* Left */}
               <div className="dice-face bg-slate-200 [transform:rotateY(-90deg)_translateZ(32px)] sm:[transform:rotateY(-90deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[3]} className="w-full h-full object-cover" />
+                <img src={dummyAvatars[3]} className="w-full h-full object-contain p-1.5" />
               </div>
               
               {/* Top */}
               <div className="dice-face bg-slate-200 [transform:rotateX(90deg)_translateZ(32px)] sm:[transform:rotateX(90deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[4]} className="w-full h-full object-cover" />
+                <img src={dummyAvatars[4]} className="w-full h-full object-contain p-1.5" />
               </div>
               
               {/* Bottom */}
               <div className="dice-face bg-slate-200 [transform:rotateX(-90deg)_translateZ(32px)] sm:[transform:rotateX(-90deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[5]} className="w-full h-full object-cover" />
+                <img src={dummyAvatars[5]} className="w-full h-full object-contain p-1.5" />
               </div>
               
             </div>
@@ -137,7 +137,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
               <div className="flex-1 p-3 text-center">
                 <div className="text-red-200 text-xs font-bold uppercase tracking-wider mb-1">Game Mode</div>
                 <div className="text-white font-black flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 rounded-full bg-yellow-400 flex items-center justify-center text-[10px] text-yellow-900">👑</span>
+                  <span className="w-4 h-4 rounded-full bg-yellow-400 flex items-center justify-center text-[10px] text-yellow-900">ðŸ‘‘</span>
                   Classic
                 </div>
               </div>
@@ -206,6 +206,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     </div>
   );
 };
+
 
 
 
