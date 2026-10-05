@@ -2,7 +2,7 @@
 import { socketService } from '../../services/SocketService';
 import { authService } from '../../services/AuthService';
 import { PlayerColor } from '../../types/player';
-import { X, Search, Clock } from 'lucide-react';
+import { X, Search, Clock, Globe } from 'lucide-react';
 
 interface MatchmakingModalProps {
   mode?: 2 | 4;
@@ -64,23 +64,37 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
 
   const opponents = foundPlayers.filter(p => p.id !== socketService.socket?.id);
 
-  const PlayerSlot = ({ avatar, name, isFound, delayStr }: { avatar?: string, name?: string, isFound: boolean, delayStr?: string }) => (
+  const PlayerSlot = ({ avatar, name, isFound, delayStr, isLocal }: { avatar?: string, name?: string, isFound: boolean, delayStr?: string, isLocal?: boolean }) => (
     <div className="flex flex-col items-center relative z-10">
       <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white p-1 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-        <div className="w-full h-full border-2 border-red-600 relative overflow-hidden bg-slate-200">
-          {isFound ? (
-            <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} alt={name} className="w-full h-full object-cover animate-scale-in" />
+        <div className="w-full h-full border-2 border-red-600 relative overflow-hidden bg-slate-900 flex items-center justify-center">
+          {isFound || isLocal ? (
+            <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} alt={name} className="w-full h-full object-cover animate-globe-zoom" />
           ) : (
-            <div className="w-full absolute top-0 left-0 animate-slot-scroll flex flex-col" style={{ animationDelay: delayStr }}>
-              {dummyAvatars.map((src, idx) => (
-                <img key={idx} src={src} className="w-full h-full object-cover flex-shrink-0" alt="avatar" />
-              ))}
+            <div className="w-full h-full relative flex items-center justify-center bg-blue-950 overflow-hidden">
+              {/* Spinning Globe Icon */}
+              <Globe className="absolute w-[140%] h-[140%] text-blue-500/20 animate-spin-slow stroke-1 pointer-events-none" />
+              {/* Radar Sweep Effect */}
+              <div 
+                className="absolute inset-0 animate-radar opacity-80 mix-blend-screen"
+                style={{ 
+                  background: 'conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(59,130,246,0.8) 360deg)',
+                  animationDelay: delayStr
+                }} 
+              />
+              {/* Radar Center Dot */}
+              <div className="w-1.5 h-1.5 bg-blue-300 rounded-full shadow-[0_0_8px_4px_rgba(96,165,250,1)] z-10" />
+              {/* Subtle grid lines */}
+              <div className="absolute inset-0 border border-blue-400/20 rounded-full scale-[0.65]" />
+              <div className="absolute inset-0 border border-blue-400/20 rounded-full scale-[0.35]" />
+              {/* Inner shadow for 3D effect */}
+              <div className="absolute inset-0 shadow-[inset_0_0_24px_rgba(0,0,0,0.95)]" />
             </div>
           )}
         </div>
       </div>
       <span className="mt-2 text-white font-bold drop-shadow-md min-h-[1.5rem] text-sm sm:text-base text-center">
-        {isFound ? (name || 'Opponent') : '???'}
+        {isFound || isLocal ? (name || 'Opponent') : 'Scanning...'}
       </span>
     </div>
   );
@@ -171,3 +185,4 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     </div>
   );
 };
+

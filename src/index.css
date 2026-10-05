@@ -180,3 +180,20 @@
   animation: slot-scroll 1.5s linear infinite;
 }
 
+
+@keyframes globe-zoom {
+  0% { transform: scale(0.1); opacity: 0; filter: blur(10px); }
+  60% { transform: scale(1.15); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+.animate-globe-zoom {
+  animation: globe-zoom 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes radar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-radar {
+  animation: radar-spin 2s linear infinite;
+}
+
