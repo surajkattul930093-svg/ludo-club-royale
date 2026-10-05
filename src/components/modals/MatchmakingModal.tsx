@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { socketService } from '../../services/SocketService';
 import { authService } from '../../services/AuthService';
 import { PlayerColor } from '../../types/player';
@@ -11,7 +11,8 @@ interface MatchmakingModalProps {
   onCancel: () => void;
 }
 
-const dummyAvatars = Array.from({ length: 20 }).map((_, i) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 500}`);
+
+const dummyAvatars = Array.from({ length: 6 }).map((_, i) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 600}`);
 
 const VSBadge = () => (
   <div className="w-16 h-16 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-full flex items-center justify-center p-1 shadow-[0_0_20px_rgba(234,179,8,0.5)] transform -rotate-12">
@@ -64,48 +65,60 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
 
   const opponents = foundPlayers.filter(p => p.id !== socketService.socket?.id);
 
-  const PlayerSlot = ({ avatar, name, isFound, delayStr, isLocal }: { avatar?: string, name?: string, isFound: boolean, delayStr?: string, isLocal?: boolean }) => (
-    <div className="flex flex-col items-center relative z-10">
-      <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white p-1 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-        <div className="w-full h-full border-2 border-red-600 relative overflow-hidden bg-slate-900 flex items-center justify-center">
-          {isFound || isLocal ? (
-            <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} alt={name} className="w-full h-full object-cover animate-globe-zoom" />
-          ) : (
-            <div className="w-full h-full relative flex items-center justify-center overflow-hidden bg-slate-800" style={{ perspective: '800px' }}>
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_70%)]" />
+  const PlayerSlot = ({ avatar, name, isFound, delayStr, isLocal }: { avatar?: string, name?: string, isFound: boolean, delayStr?: string, isLocal?: boolean }) => {
+    const diceAnimClass = isLocal ? '' : (isFound ? 'animate-dice-stop' : 'animate-dice-spin-wild');
+    
+    return (
+      <div className="flex flex-col items-center relative z-10">
+        <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white p-1 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+          <div className="w-full h-full border-2 border-red-600 relative overflow-hidden bg-slate-800 flex items-center justify-center" style={{ perspective: '800px' }}>
+            
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_70%)]" />
+            
+            {/* 3D Spinning Dice containing avatars */}
+            <div className={`relative w-16 h-16 sm:w-20 sm:h-20 ${diceAnimClass}`} style={{ animationDelay: delayStr }}>
               
-              {/* 3D Spinning Dice */}
-              <div className="relative w-12 h-12 sm:w-14 sm:h-14 animate-dice-spin" style={{ animationDelay: delayStr }}>
-                <div className="dice-face bg-red-500 [transform:translateZ(24px)] sm:[transform:translateZ(28px)]">
-                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
-                </div>
-                <div className="dice-face bg-blue-500 [transform:rotateY(180deg)_translateZ(24px)] sm:[transform:rotateY(180deg)_translateZ(28px)]">
-                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
-                </div>
-                <div className="dice-face bg-emerald-500 [transform:rotateY(90deg)_translateZ(24px)] sm:[transform:rotateY(90deg)_translateZ(28px)]">
-                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
-                </div>
-                <div className="dice-face bg-amber-400 [transform:rotateY(-90deg)_translateZ(24px)] sm:[transform:rotateY(-90deg)_translateZ(28px)]">
-                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
-                </div>
-                <div className="dice-face bg-purple-500 [transform:rotateX(90deg)_translateZ(24px)] sm:[transform:rotateX(90deg)_translateZ(28px)]">
-                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
-                </div>
-                <div className="dice-face bg-pink-500 [transform:rotateX(-90deg)_translateZ(24px)] sm:[transform:rotateX(-90deg)_translateZ(28px)]">
-                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
-                </div>
+              {/* Front - Target Avatar */}
+              <div className="dice-face bg-slate-200 [transform:translateZ(32px)] sm:[transform:translateZ(40px)] overflow-hidden">
+                <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} alt={name} className="w-full h-full object-cover" />
               </div>
               
-              <div className="absolute inset-0 shadow-[inset_0_0_24px_rgba(0,0,0,0.8)] pointer-events-none" />
+              {/* Back */}
+              <div className="dice-face bg-slate-200 [transform:rotateY(180deg)_translateZ(32px)] sm:[transform:rotateY(180deg)_translateZ(40px)] overflow-hidden">
+                <img src={dummyAvatars[1]} className="w-full h-full object-cover" />
+              </div>
+              
+              {/* Right */}
+              <div className="dice-face bg-slate-200 [transform:rotateY(90deg)_translateZ(32px)] sm:[transform:rotateY(90deg)_translateZ(40px)] overflow-hidden">
+                <img src={dummyAvatars[2]} className="w-full h-full object-cover" />
+              </div>
+              
+              {/* Left */}
+              <div className="dice-face bg-slate-200 [transform:rotateY(-90deg)_translateZ(32px)] sm:[transform:rotateY(-90deg)_translateZ(40px)] overflow-hidden">
+                <img src={dummyAvatars[3]} className="w-full h-full object-cover" />
+              </div>
+              
+              {/* Top */}
+              <div className="dice-face bg-slate-200 [transform:rotateX(90deg)_translateZ(32px)] sm:[transform:rotateX(90deg)_translateZ(40px)] overflow-hidden">
+                <img src={dummyAvatars[4]} className="w-full h-full object-cover" />
+              </div>
+              
+              {/* Bottom */}
+              <div className="dice-face bg-slate-200 [transform:rotateX(-90deg)_translateZ(32px)] sm:[transform:rotateX(-90deg)_translateZ(40px)] overflow-hidden">
+                <img src={dummyAvatars[5]} className="w-full h-full object-cover" />
+              </div>
+              
             </div>
-          )}
+            
+            <div className="absolute inset-0 shadow-[inset_0_0_24px_rgba(0,0,0,0.8)] pointer-events-none" />
+          </div>
         </div>
+        <span className="mt-2 text-white font-bold drop-shadow-md min-h-[1.5rem] text-sm sm:text-base text-center">
+          {isFound || isLocal ? (name || 'Opponent') : 'Rolling...'}
+        </span>
       </div>
-      <span className="mt-2 text-white font-bold drop-shadow-md min-h-[1.5rem] text-sm sm:text-base text-center">
-        {isFound || isLocal ? (name || 'Opponent') : 'Rolling...'}
-      </span>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-red-950/95 backdrop-blur-md animate-fade-in sm:p-4">
@@ -193,5 +206,9 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     </div>
   );
 };
+
+
+
+
 
 
