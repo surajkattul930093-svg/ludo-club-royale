@@ -2,7 +2,8 @@
 import { socketService } from '../../services/SocketService';
 import { authService } from '../../services/AuthService';
 import { PlayerColor } from '../../types/player';
-import { X, Search, Clock, Globe } from 'lucide-react';
+import { X, Search, Clock, MapPin } from 'lucide-react';
+import WorldMap from '../../assets/world.svg';
 
 interface MatchmakingModalProps {
   mode?: 2 | 4;
@@ -11,17 +12,16 @@ interface MatchmakingModalProps {
   onCancel: () => void;
 }
 
-const dummyAvatars = Array.from({ length: 8 }).map((_, i) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 800}`);
+const dummyAvatars = Array.from({ length: 7 }).map((_, i) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 900}`);
 
 const mapNodes = [
-  { top: '40%', left: '20%' },
-  { top: '70%', left: '50%' },
-  { top: '40%', left: '80%' },
-  { top: '20%', left: '40%' }, 
-  { top: '80%', left: '25%' },
-  { top: '25%', left: '70%' },
-  { top: '65%', left: '85%' },
-  { top: '50%', left: '10%' },
+  { top: '45%', left: '71%', label: 'INDIA' },
+  { top: '35%', left: '22%', label: 'USA' },
+  { top: '65%', left: '32%', label: 'BRAZIL' },
+  { top: '25%', left: '48%', label: 'UK' },
+  { top: '38%', left: '78%', label: 'CHINA' },
+  { top: '75%', left: '55%', label: 'S. AFRICA' },
+  { top: '78%', left: '87%', label: 'AUSTRALIA' },
 ];
 
 export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, preferredColor, onMatchFound, onCancel }) => {
@@ -172,3 +172,4 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     </div>
   );
 };
+
