@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useRef } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { socketService } from '../../services/SocketService';
 import { authService } from '../../services/AuthService';
 import { PlayerColor } from '../../types/player';
@@ -19,88 +19,62 @@ const VSBadge = () => (
   </div>
 );
 
-const PlayerSlot = ({ avatar, name, isFound, delayStr, isLocal }: { avatar?: string, name?: string, isFound: boolean, delayStr?: string, isLocal?: boolean }) => {
-  const [spinAngle, setSpinAngle] = useState(0);
-  const [tiltAngle, setTiltAngle] = useState(-25);
-  const [transitionStyle, setTransitionStyle] = useState('transform 10s linear');
-  const [startTime, setStartTime] = useState(Date.now());
-  
+const dummyAvatars = Array.from({ length: 7 }).map((_, i) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 900}`);
+
+const TrainWindowSlot = ({ avatar, name, isFound, delayStr, isLocal }: { avatar?: string, name?: string, isFound: boolean, delayStr?: string, isLocal?: boolean }) => {
+  const [animClass, setAnimClass] = useState('');
+
   useEffect(() => {
     if (isLocal) return;
-    
     if (!isFound) {
-      // Start endless spin
-      const delayMs = delayStr ? parseFloat(delayStr) * 1000 : 0;
-      const timeout = setTimeout(() => {
-        setTransitionStyle('transform 20s linear');
-        setTiltAngle(-25); // Spinning on edge
-        setSpinAngle(360 * 60); // 3 spins/sec for 20s
-        setStartTime(Date.now());
-      }, delayMs);
-      return () => clearTimeout(timeout);
+      setAnimClass('animate-[train-fast_0.25s_linear_infinite]');
     } else {
-      // Match found! Calculate deceleration to land flawlessly
-      const elapsed = (Date.now() - startTime) / 1000;
-      const currentEstimated = elapsed * (360 * 3); 
-      // Calculate next multiple of 360, add 2 extra rotations for a dramatic, smooth fall
-      const nextTarget = Math.ceil(currentEstimated / 360) * 360 + 720;
-      
-      setTransitionStyle('transform 2.5s cubic-bezier(0.15, 0.9, 0.25, 1)'); 
-      setTiltAngle(0); // Fall flat perfectly
-      setSpinAngle(nextTarget); // Land on front face
+      setAnimClass('animate-[train-stop_1.8s_cubic-bezier(0.1,0.9,0.25,1)_forwards]');
     }
   }, [isFound, isLocal]);
 
   return (
     <div className="flex flex-col items-center relative z-10">
-      <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white p-1 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-        <div className="w-full h-full border-2 border-red-600 relative overflow-hidden bg-slate-900 flex items-center justify-center" style={{ perspective: '800px' }}>
-          
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_70%)]" />
+      <div className="w-24 h-24 sm:w-28 sm:h-28 bg-slate-400 p-2 rounded-[2.5rem] shadow-[0_15px_35px_rgba(0,0,0,0.8)] relative overflow-hidden border-b-4 border-r-4 border-slate-500 border-t-2 border-l-2 border-slate-300">
+        
+        <div className="w-full h-full bg-slate-900 rounded-[2rem] relative overflow-hidden shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
           
           {isLocal ? (
-            <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=local`} alt={name} className="w-full h-full object-cover relative z-10 animate-fade-in" />
+            <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=local`} alt={name} className="w-full h-full object-cover" />
           ) : (
-            <div 
-              className="relative w-16 h-16 sm:w-20 sm:h-20"
-              style={{ 
-                transformStyle: 'preserve-3d', 
-                transition: transitionStyle,
-                transform: `rotateX(${tiltAngle}deg) rotateY(${spinAngle}deg)`
-              }}
-            >
-              {/* Front Face - Opponent Avatar */}
-              <div className="absolute inset-0 bg-white border-2 border-emerald-400 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(52,211,153,0.8)] [transform:translateZ(32px)] sm:[transform:translateZ(40px)]">
-                <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} className="w-full h-full object-cover" />
+            <>
+              {!isFound && (
+                <div className="absolute inset-0 z-0">
+                  <div className="w-[150%] h-[1px] bg-white/40 absolute top-[15%] animate-[train-fast_0.15s_linear_infinite]" />
+                  <div className="w-[200%] h-0.5 bg-white/20 absolute top-[40%] animate-[train-fast_0.1s_linear_infinite]" />
+                  <div className="w-[150%] h-[1px] bg-white/50 absolute top-[65%] animate-[train-fast_0.18s_linear_infinite]" />
+                  <div className="w-[250%] h-1 bg-white/30 absolute top-[85%] animate-[train-fast_0.25s_linear_infinite]" />
+                </div>
+              )}
+
+              <div 
+                className={`absolute inset-0 w-full h-full flex items-center justify-center ${animClass}`}
+                style={{ animationDelay: !isFound ? delayStr : '0s' }}
+              >
+                {!isFound ? (
+                  <div className="w-[200%] h-full flex items-center gap-12 opacity-50 blur-[1px] scale-x-[1.5]">
+                     <img src={dummyAvatars[1]} className="w-16 h-16 object-cover rounded-full mix-blend-luminosity" />
+                     <img src={dummyAvatars[2]} className="w-16 h-16 object-cover rounded-full mix-blend-luminosity" />
+                  </div>
+                ) : (
+                  <img src={avatar || dummyAvatars[0]} className="w-full h-full object-cover" />
+                )}
               </div>
-              {/* Back Face */}
-              <div className="absolute inset-0 bg-slate-800 border-2 border-slate-600 rounded-xl flex items-center justify-center shadow-[inset_0_0_15px_rgba(0,0,0,0.8)] [transform:rotateY(180deg)_translateZ(32px)] sm:[transform:rotateY(180deg)_translateZ(40px)]">
-                <span className="text-white text-3xl font-black opacity-80">?</span>
-              </div>
-              {/* Right Face */}
-              <div className="absolute inset-0 bg-slate-800 border-2 border-slate-600 rounded-xl flex items-center justify-center shadow-[inset_0_0_15px_rgba(0,0,0,0.8)] [transform:rotateY(90deg)_translateZ(32px)] sm:[transform:rotateY(90deg)_translateZ(40px)]">
-                <span className="text-white text-3xl font-black opacity-80">?</span>
-              </div>
-              {/* Left Face */}
-              <div className="absolute inset-0 bg-slate-800 border-2 border-slate-600 rounded-xl flex items-center justify-center shadow-[inset_0_0_15px_rgba(0,0,0,0.8)] [transform:rotateY(-90deg)_translateZ(32px)] sm:[transform:rotateY(-90deg)_translateZ(40px)]">
-                <span className="text-white text-3xl font-black opacity-80">?</span>
-              </div>
-              {/* Top Face */}
-              <div className="absolute inset-0 bg-slate-800 border-2 border-slate-600 rounded-xl flex items-center justify-center shadow-[inset_0_0_15px_rgba(0,0,0,0.8)] [transform:rotateX(90deg)_translateZ(32px)] sm:[transform:rotateX(90deg)_translateZ(40px)]">
-                <span className="text-white text-3xl font-black opacity-80">?</span>
-              </div>
-              {/* Bottom Face */}
-              <div className="absolute inset-0 bg-slate-800 border-2 border-slate-600 rounded-xl flex items-center justify-center shadow-[inset_0_0_15px_rgba(0,0,0,0.8)] [transform:rotateX(-90deg)_translateZ(32px)] sm:[transform:rotateX(-90deg)_translateZ(40px)]">
-                <span className="text-white text-3xl font-black opacity-80">?</span>
-              </div>
-            </div>
+            </>
           )}
-          
-          <div className="absolute inset-0 shadow-[inset_0_0_24px_rgba(0,0,0,0.8)] pointer-events-none" />
+
+          <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/30 pointer-events-none rounded-[2rem] shadow-[inset_2px_2px_5px_rgba(255,255,255,0.2)]" />
+          <div className="absolute top-1.5 left-4 right-4 h-1 bg-white/40 rounded-full blur-[1px] opacity-70" />
         </div>
       </div>
-      <span className="mt-2 text-white font-bold drop-shadow-md min-h-[1.5rem] text-sm sm:text-base text-center">
-        {isFound || isLocal ? (name || 'Opponent') : 'Rolling...'}
+      
+      <span className="mt-3 text-white font-bold drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] min-h-[1.5rem] text-sm sm:text-base text-center bg-black/60 px-4 py-1 rounded-full border border-slate-700">
+        {isFound || isLocal ? (name || 'Opponent') : 'Searching...'}
       </span>
     </div>
   );
@@ -123,7 +97,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
       const activeColors = data.players.map(p => p.color);
       setTimeout(() => {
         onMatchFound(data.gameId, data.assignedColor, activeColors, data.players);
-      }, 3500); // 3.5s to let the dice fall perfectly before starting game
+      }, 3500); 
     };
 
     socketService.socket?.on('match_found', handleMatchFound);
@@ -162,11 +136,11 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
           <div className="relative w-full max-w-sm mb-12">
             {mode === 2 ? (
               <div className="flex justify-between items-center px-4">
-                 <PlayerSlot avatar={currentUser?.avatar} name={currentUser?.displayName} isFound={true} isLocal={true} />
+                 <TrainWindowSlot avatar={currentUser?.avatar} name={currentUser?.displayName} isFound={true} isLocal={true} />
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[-1rem]">
                    <VSBadge />
                  </div>
-                 <PlayerSlot 
+                 <TrainWindowSlot 
                    avatar={opponents[0]?.profile?.avatar} 
                    name={opponents[0]?.profile?.displayName} 
                    isFound={isMatchFound} 
@@ -175,8 +149,8 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-y-10 gap-x-12 relative place-items-center">
-                <PlayerSlot avatar={currentUser?.avatar} name={currentUser?.displayName} isFound={true} isLocal={true} />
-                <PlayerSlot 
+                <TrainWindowSlot avatar={currentUser?.avatar} name={currentUser?.displayName} isFound={true} isLocal={true} />
+                <TrainWindowSlot 
                    avatar={opponents[0]?.profile?.avatar} 
                    name={opponents[0]?.profile?.displayName} 
                    isFound={isMatchFound} 
@@ -185,13 +159,13 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[-1rem]">
                    <VSBadge />
                 </div>
-                <PlayerSlot 
+                <TrainWindowSlot 
                    avatar={opponents[1]?.profile?.avatar} 
                    name={opponents[1]?.profile?.displayName} 
                    isFound={isMatchFound} 
                    delayStr="0.25s" 
                 />
-                <PlayerSlot 
+                <TrainWindowSlot 
                    avatar={opponents[2]?.profile?.avatar} 
                    name={opponents[2]?.profile?.displayName} 
                    isFound={isMatchFound} 
@@ -203,7 +177,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
 
           <div className="mt-6 flex flex-col items-center">
             {isMatchFound ? (
-              <div className="text-emerald-400 font-black text-xl animate-pulse">MATCH FOUND!</div>
+              <div className="text-emerald-400 font-black text-xl animate-pulse">TRAIN STOPPING...</div>
             ) : (
               <>
                 <div className="bg-black/50 border border-slate-700 rounded-full px-6 py-2 flex items-center gap-3">
