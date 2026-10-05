@@ -409,7 +409,7 @@ export class AudioService {
     const ctx = this.initContext();
     if (!ctx) return;
     const now = ctx.currentTime;
-    if (emoji === '😂' || emoji === '😜' || emoji === '🥳') {
+    if (emoji === '\u{1F602}' || emoji === '\u{1F61C}' || emoji === '\u{1F973}') {
       for(let i=0; i<4; i++) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -421,7 +421,7 @@ export class AudioService {
         osc.connect(gain); gain.connect(this.mainGain);
         osc.start(now + i * 0.15); osc.stop(now + i * 0.15 + 0.1);
       }
-    } else if (emoji === '😡' || emoji === '🤬') {
+    } else if (emoji === '\u{1F621}' || emoji === '\u{1F92C}') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
@@ -431,7 +431,7 @@ export class AudioService {
       gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
       osc.connect(gain); gain.connect(this.mainGain);
       osc.start(now); osc.stop(now + 0.5);
-    } else if (emoji === '😭' || emoji === '😱') {
+    } else if (emoji === '\u{1F62D}' || emoji === '\u{1F631}') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
@@ -454,4 +454,3 @@ export class AudioService {
     }
   }
 }
-

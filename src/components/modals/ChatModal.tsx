@@ -7,7 +7,7 @@ interface ChatModalProps {
   onSend: (text: string, isEmoji: boolean) => void;
 }
 
-const EMOJIS = ['😂', '😡', '😭', '🤩', '👍', '👎', '🥳', '😱', '🤫', '😎', '😜', '🤬'];
+const EMOJIS = ['\u{1F602}', '\u{1F621}', '\u{1F62D}', '\u{1F929}', '\u{1F44D}', '\u{1F44E}', '\u{1F973}', '\u{1F631}', '\u{1F92B}', '\u{1F60E}', '\u{1F61C}', '\u{1F92C}'];
 const MESSAGES = [
   'Well played!',
   'Oops!',

@@ -78,7 +78,7 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
             {player.activeChat && (
         <div key={player.activeChat.id} className={`absolute z-50 animate-chat-bubble ${isRightSide ? 'right-10 top-[-30px]' : 'left-10 top-[-30px]'}`}>
           <div className={`bg-white border-2 border-slate-200 rounded-2xl px-3 py-1.5 shadow-xl ${isRightSide ? 'rounded-br-none' : 'rounded-bl-none'}`}>
-            <span className={`text-slate-900 font-bold ${player.activeChat.isEmoji ? 'text-4xl inline-block ' + (['😂','😜','🥳'].includes(player.activeChat.text) ? 'emoji-laugh' : ['😡','🤬'].includes(player.activeChat.text) ? 'emoji-angry' : ['😭','😱'].includes(player.activeChat.text) ? 'emoji-cry' : ['🤩','😎'].includes(player.activeChat.text) ? 'emoji-wow' : 'emoji-default') : 'text-sm'}`}>
+            <span className={`text-slate-900 font-bold ${player.activeChat.isEmoji ? 'text-4xl inline-block ' + (['\u{1F602}','\u{1F61C}','\u{1F973}'].includes(player.activeChat.text) ? 'emoji-laugh' : ['\u{1F621}','\u{1F92C}'].includes(player.activeChat.text) ? 'emoji-angry' : ['\u{1F62D}','\u{1F631}'].includes(player.activeChat.text) ? 'emoji-cry' : ['\u{1F929}','\u{1F60E}'].includes(player.activeChat.text) ? 'emoji-wow' : 'emoji-default') : 'text-sm'}`}>
               {player.activeChat.text}
             </span>
           </div>
