@@ -90,40 +90,60 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
           </div>
 
           {/* World Map Container */}
-          <div className="w-full h-64 sm:h-72 relative bg-blue-950/50 border border-blue-500/30 rounded-3xl shadow-[inset_0_0_50px_rgba(30,58,138,0.5)]">
-            <Globe className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] text-blue-500/20 stroke-[0.5] animate-spin-slow pointer-events-none" />
+          <div className="w-full aspect-[2000/857] sm:max-h-72 relative bg-blue-950/80 border border-blue-500/50 rounded-xl shadow-[inset_0_0_50px_rgba(30,58,138,0.8)] overflow-hidden">
             
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:20px_20px]" />
+            {/* The Real World Map */}
+            <img src={WorldMap} alt="World Map" className="absolute inset-0 w-full h-full object-contain pointer-events-none" style={{ filter: 'invert(0.8) sepia(1) saturate(5) hue-rotate(180deg) brightness(1.2) opacity(0.6)' }} />
             
+            {/* Grid overlay */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15)_1px,transparent_1px)] bg-[size:20px_20px]" />
+            
+            {/* Render searching dummy avatars */}
             {!isMatchFound && mapNodes.map((node, idx) => (
               <div 
                 key={idx} 
-                className="absolute w-8 h-8 rounded-full border border-blue-400/50 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 animate-pulse bg-slate-900"
-                style={{ top: node.top, left: node.left, animationDelay: `${idx * 0.2}s` }}
+                className="absolute flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 animate-pulse"
+                style={{ top: node.top, left: node.left, animationDelay: `${idx * 0.3}s` }}
               >
-                <img src={dummyAvatars[idx]} className="w-full h-full object-cover opacity-60 mix-blend-luminosity" />
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border border-blue-400/50 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                  <img src={dummyAvatars[idx]} className="w-full h-full object-cover opacity-60 mix-blend-luminosity" />
+                </div>
               </div>
             ))}
 
+            {/* Render matched opponents */}
             {isMatchFound && opponents.map((opp, idx) => (
               <div 
                 key={idx} 
                 className="absolute flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 z-20 animate-pop-out"
                 style={{ top: mapNodes[idx].top, left: mapNodes[idx].left }}
               >
-                <div className="w-16 h-16 rounded-full border-2 border-emerald-400 bg-white p-0.5 shadow-[0_0_20px_rgba(52,211,153,0.8)]">
+                {/* Glowing Country Highlight */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-[radial-gradient(circle,rgba(52,211,153,0.4)_0%,transparent_70%)] rounded-full animate-pulse" />
+                </div>
+                
+                {/* Map Pin / Location Label */}
+                <div className="absolute -top-6 flex items-center gap-1 bg-emerald-950/80 border border-emerald-500/50 px-2 py-0.5 rounded-full whitespace-nowrap mb-1">
+                  <MapPin className="w-3 h-3 text-emerald-400" />
+                  <span className="text-[10px] sm:text-xs text-emerald-300 font-bold tracking-wider">{mapNodes[idx].label}</span>
+                </div>
+                
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-emerald-400 bg-white p-0.5 shadow-[0_0_25px_rgba(52,211,153,0.9)] relative z-10">
                   <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
                     <img src={opp?.profile?.avatar || dummyAvatars[idx]} className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <span className="mt-1 text-xs text-white font-bold bg-black/60 px-2 py-0.5 rounded-full whitespace-nowrap">
+                
+                <span className="mt-1 text-[10px] sm:text-xs text-white font-bold bg-black/80 px-2 py-0.5 rounded-full whitespace-nowrap shadow-md relative z-10 border border-slate-700">
                   {opp?.profile?.displayName || `Player ${idx + 2}`}
                 </span>
               </div>
             ))}
             
+            {/* Laser Beams connecting matched players */}
             {isMatchFound && (
-              <svg className="absolute inset-0 w-full h-full overflow-visible z-10 pointer-events-none drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]">
+              <svg className="absolute inset-0 w-full h-full overflow-visible z-10 pointer-events-none drop-shadow-[0_0_8px_rgba(52,211,153,1)]">
                 {opponents.map((opp, idx) => (
                   <line 
                     key={idx}
@@ -172,4 +192,3 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     </div>
   );
 };
-
