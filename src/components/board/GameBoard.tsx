@@ -757,7 +757,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                 !isAnimating &&
                 token.color === currentTurnColor &&
                 movableTokenIds.includes(token.id);
-              const isSelected = selectedTokenId === token.id;
+              const isSelected = selectedTokenId === token.id && token.color === currentTurnColor;
 
               return (
                 <div
@@ -799,4 +799,5 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     </div>
   );
 };
+
 
