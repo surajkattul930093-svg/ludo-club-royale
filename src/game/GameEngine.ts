@@ -1,4 +1,4 @@
-import { GameMode, GameState, DebugMovementLog } from '../types/game';
+﻿import { GameMode, GameState, DebugMovementLog } from '../types/game';
 import { Player, PlayerColor, PlayerToken } from '../types/player';
 import { TokenState } from '../types/token';
 import { createInitialGameState } from './GameState';
@@ -11,6 +11,7 @@ import { AudioService } from '../services/AudioService';
 export type GameStateListener = (state: GameState) => void;
 
 export class GameEngine {
+  private isDestroyed = false;
   private state: GameState;
   private listeners: Set<GameStateListener> = new Set();
   private turnManager: TurnManager;
@@ -48,6 +49,8 @@ export class GameEngine {
     };
     this.notify();
   }
+
+  public destroy() { this.isDestroyed = true; }
 
   public restartGame(mode?: GameMode): void {
     if (this.animationTimer) {
@@ -141,7 +144,7 @@ export class GameEngine {
       });
 
       setTimeout(() => {
-        this.nextTurn();
+        if (!this.isDestroyed) this.nextTurn();
       }, 1000);
 
       return diceValue;
@@ -168,7 +171,7 @@ export class GameEngine {
       });
 
       setTimeout(() => {
-        this.nextTurn();
+        if (!this.isDestroyed) this.nextTurn();
       }, 1000);
 
       return diceValue;
@@ -190,7 +193,7 @@ export class GameEngine {
     if (player.isAi) {
       setTimeout(() => {
         const bestTokenId = this.chooseAiToken(player.color, movableTokenIds, diceValue);
-        this.moveToken(bestTokenId);
+        if (!this.isDestroyed) this.moveToken(bestTokenId);
       }, 700);
     } else if (movableTokenIds.length === 1) {
       setTimeout(() => {
@@ -253,7 +256,7 @@ export class GameEngine {
     const sequenceSummary = [
       startPos.cellId,
       ...movementQueue.map((s) => s.logicalPos.cellId),
-    ].join(' Ã¢â€ â€™ ');
+    ].join(' ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ ');
 
     const debugLog: DebugMovementLog = {
       dice: diceValue,
@@ -446,17 +449,17 @@ export class GameEngine {
         animatingToken: null,
         selectedTokenId: null,
         movableTokenIds: [],
-        lastActionMessage: `Ã°Å¸Ââ€  Game Over! ${this.state.players[winner].name} wins!`,
+        lastActionMessage: `ÃƒÂ°Ã…Â¸Ã‚ÂÃ¢â‚¬Â  Game Over! ${this.state.players[winner].name} wins!`,
       });
       return;
     }
 
     if (didCapture) {
-      bonusMsg = ` Ã¢Å¡â€Ã¯Â¸Â ${captureMessage} Bonus roll!`;
+      bonusMsg = ` ÃƒÂ¢Ã…Â¡Ã¢â‚¬ÂÃƒÂ¯Ã‚Â¸Ã‚Â ${captureMessage} Bonus roll!`;
     } else if (didFinishToken) {
-      bonusMsg = ` Ã¢Â­Â Token reached HOME! Bonus roll!`;
+      bonusMsg = ` ÃƒÂ¢Ã‚Â­Ã‚Â Token reached HOME! Bonus roll!`;
     } else if (diceValue === 6) {
-      bonusMsg = ` Ã°Å¸Å½Â² Rolled a 6! Bonus roll!`;
+      bonusMsg = ` ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â² Rolled a 6! Bonus roll!`;
     }
 
     // If bonus roll: Player stays active and ready to roll again!
@@ -507,7 +510,7 @@ export class GameEngine {
       });
 
       setTimeout(() => {
-        this.nextTurn();
+        if (!this.isDestroyed) this.nextTurn();
       }, 500);
     }
   }
@@ -576,7 +579,7 @@ export class GameEngine {
           this.state.currentTurnColor === current.color &&
           !this.state.isAnimating
         ) {
-          this.rollDice();
+          if (!this.isDestroyed) this.rollDice();
         }
       }, 700);
     }
@@ -694,10 +697,11 @@ export class GameEngine {
     });
 
     if (this.state.currentTurnColor === color) {
-      this.nextTurn();
+      if (!this.isDestroyed) this.nextTurn();
     }
   }
 }
+
 
 
 

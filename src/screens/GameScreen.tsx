@@ -39,6 +39,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   const engine = useMemo(() => new GameEngine(mode, selectedColors, localColor || undefined, remotePlayers), [mode, selectedColors, localColor, remotePlayers]);
   const [gameState, setGameState] = useState<GameState>(engine.getState());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSpectating, setIsSpectating] = useState(false);
 
   const actionQueueRef = useRef<any[]>([]);
   const isProcessingQueueRef = useRef(false);
@@ -137,6 +138,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
     return () => {
       unsubscribe();
+      engine.destroy();
     };
   }, [engine, soundEnabled, animationSpeed]);
 
@@ -190,6 +192,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   };
 
   const handleRestart = () => {
+    setIsSpectating(false);
     if (!gameState.isAnimating) {
       engine.restartGame(mode);
     }
@@ -275,13 +278,17 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         </div>
       </main>
 
+      {(!isSpectating || gameState.status === 'game_over') && (
       <VictoryModal
+        isGameOver={gameState.status === 'game_over'}
+        onSpectate={() => setIsSpectating(true)}
         winner={gameState.winner}
         rankings={gameState.rankings}
         players={players}
         onPlayAgain={handleRestart}
         onBackToMenu={handleBackToMenu}
       />
+      )}
 
       <SettingsModal
         isOpen={isSettingsOpen}
@@ -294,6 +301,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
+
+
 
 
 

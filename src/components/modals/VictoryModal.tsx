@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Player, PlayerColor } from '../../types/player';
 import { AudioService } from '../../services/AudioService';
@@ -7,6 +7,8 @@ import { Trophy, RotateCcw, Home } from 'lucide-react';
 import { PlayerAvatar } from '../players/PlayerAvatar';
 
 interface VictoryModalProps {
+  isGameOver?: boolean;
+  onSpectate?: () => void;
   winner: PlayerColor | null;
   rankings: PlayerColor[];
   players: Record<PlayerColor, Player>;
@@ -20,6 +22,8 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   players,
   onPlayAgain,
   onBackToMenu,
+  isGameOver,
+  onSpectate,
 }) => {
   useEffect(() => {
     if (winner) {
@@ -101,6 +105,11 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
 
         {/* Action Buttons */}
         <div className="mt-6 flex flex-col gap-2.5">
+          {!isGameOver && onSpectate && (
+            <Button variant="secondary" fullWidth size="md" onClick={onSpectate} className="mb-2">
+              Spectate Match
+            </Button>
+          )}
           <Button variant="primary" fullWidth size="md" onClick={onPlayAgain}>
             <RotateCcw className="w-4 h-4" />
             Play Again
@@ -115,6 +124,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
     </div>
   );
 };
+
 
 
 
