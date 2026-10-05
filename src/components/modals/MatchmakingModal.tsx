@@ -71,30 +71,38 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
           {isFound || isLocal ? (
             <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} alt={name} className="w-full h-full object-cover animate-globe-zoom" />
           ) : (
-            <div className="w-full h-full relative flex items-center justify-center bg-blue-950 overflow-hidden">
-              {/* Spinning Globe Icon */}
-              <Globe className="absolute w-[140%] h-[140%] text-blue-500/20 animate-spin-slow stroke-1 pointer-events-none" />
-              {/* Radar Sweep Effect */}
-              <div 
-                className="absolute inset-0 animate-radar opacity-80 mix-blend-screen"
-                style={{ 
-                  background: 'conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(59,130,246,0.8) 360deg)',
-                  animationDelay: delayStr
-                }} 
-              />
-              {/* Radar Center Dot */}
-              <div className="w-1.5 h-1.5 bg-blue-300 rounded-full shadow-[0_0_8px_4px_rgba(96,165,250,1)] z-10" />
-              {/* Subtle grid lines */}
-              <div className="absolute inset-0 border border-blue-400/20 rounded-full scale-[0.65]" />
-              <div className="absolute inset-0 border border-blue-400/20 rounded-full scale-[0.35]" />
-              {/* Inner shadow for 3D effect */}
-              <div className="absolute inset-0 shadow-[inset_0_0_24px_rgba(0,0,0,0.95)]" />
+            <div className="w-full h-full relative flex items-center justify-center overflow-hidden bg-slate-800" style={{ perspective: '800px' }}>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_70%)]" />
+              
+              {/* 3D Spinning Dice */}
+              <div className="relative w-12 h-12 sm:w-14 sm:h-14 animate-dice-spin" style={{ animationDelay: delayStr }}>
+                <div className="dice-face bg-red-500 [transform:translateZ(24px)] sm:[transform:translateZ(28px)]">
+                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
+                </div>
+                <div className="dice-face bg-blue-500 [transform:rotateY(180deg)_translateZ(24px)] sm:[transform:rotateY(180deg)_translateZ(28px)]">
+                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
+                </div>
+                <div className="dice-face bg-emerald-500 [transform:rotateY(90deg)_translateZ(24px)] sm:[transform:rotateY(90deg)_translateZ(28px)]">
+                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
+                </div>
+                <div className="dice-face bg-amber-400 [transform:rotateY(-90deg)_translateZ(24px)] sm:[transform:rotateY(-90deg)_translateZ(28px)]">
+                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
+                </div>
+                <div className="dice-face bg-purple-500 [transform:rotateX(90deg)_translateZ(24px)] sm:[transform:rotateX(90deg)_translateZ(28px)]">
+                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
+                </div>
+                <div className="dice-face bg-pink-500 [transform:rotateX(-90deg)_translateZ(24px)] sm:[transform:rotateX(-90deg)_translateZ(28px)]">
+                  <span className="text-white text-2xl font-black drop-shadow-md">?</span>
+                </div>
+              </div>
+              
+              <div className="absolute inset-0 shadow-[inset_0_0_24px_rgba(0,0,0,0.8)] pointer-events-none" />
             </div>
           )}
         </div>
       </div>
       <span className="mt-2 text-white font-bold drop-shadow-md min-h-[1.5rem] text-sm sm:text-base text-center">
-        {isFound || isLocal ? (name || 'Opponent') : 'Scanning...'}
+        {isFound || isLocal ? (name || 'Opponent') : 'Rolling...'}
       </span>
     </div>
   );
@@ -185,4 +193,5 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     </div>
   );
 };
+
 
