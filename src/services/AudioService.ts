@@ -409,7 +409,7 @@ export class AudioService {
     const ctx = this.initContext();
     if (!ctx) return;
     const now = ctx.currentTime;
-    if (emoji === '😂' || emoji === '😜') {
+    if (emoji === '😂' || emoji === '😜' || emoji === '🥳') {
       for(let i=0; i<4; i++) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
