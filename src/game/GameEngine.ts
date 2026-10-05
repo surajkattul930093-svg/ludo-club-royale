@@ -86,7 +86,7 @@ export class GameEngine {
       this.state.isAnimating ||
       this.state.status === 'rolling' ||
       this.state.status === 'moving' ||
-      this.state.winner
+      this.state.status === 'game_over'
     ) {
       return 0;
     }
@@ -253,7 +253,7 @@ export class GameEngine {
     const sequenceSummary = [
       startPos.cellId,
       ...movementQueue.map((s) => s.logicalPos.cellId),
-    ].join(' â†’ ');
+    ].join(' Ã¢â€ â€™ ');
 
     const debugLog: DebugMovementLog = {
       dice: diceValue,
@@ -427,6 +427,15 @@ export class GameEngine {
       if (this.state.soundEnabled) {
         AudioService.getInstance().playWin();
       }
+
+      const remainingColor = this.state.activeColors.find(c => !updatedPlayers[c].hasFinished);
+      if (remainingColor && !rankings.includes(remainingColor)) {
+        rankings.push(remainingColor);
+        updatedPlayers[remainingColor].hasFinished = true;
+        updatedPlayers[remainingColor].status = 'FINISHED';
+        updatedPlayers[remainingColor].rank = rankings.length;
+      }
+
       // Game over
       this.updateState({
         players: updatedPlayers,
@@ -437,17 +446,17 @@ export class GameEngine {
         animatingToken: null,
         selectedTokenId: null,
         movableTokenIds: [],
-        lastActionMessage: `ðŸ† Game Over! ${this.state.players[winner].name} wins!`,
+        lastActionMessage: `Ã°Å¸Ââ€  Game Over! ${this.state.players[winner].name} wins!`,
       });
       return;
     }
 
     if (didCapture) {
-      bonusMsg = ` âš”ï¸ ${captureMessage} Bonus roll!`;
+      bonusMsg = ` Ã¢Å¡â€Ã¯Â¸Â ${captureMessage} Bonus roll!`;
     } else if (didFinishToken) {
-      bonusMsg = ` â­ Token reached HOME! Bonus roll!`;
+      bonusMsg = ` Ã¢Â­Â Token reached HOME! Bonus roll!`;
     } else if (diceValue === 6) {
-      bonusMsg = ` ðŸŽ² Rolled a 6! Bonus roll!`;
+      bonusMsg = ` Ã°Å¸Å½Â² Rolled a 6! Bonus roll!`;
     }
 
     // If bonus roll: Player stays active and ready to roll again!
@@ -689,6 +698,9 @@ export class GameEngine {
     }
   }
 }
+
+
+
 
 
 
