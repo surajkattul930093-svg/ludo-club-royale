@@ -11,16 +11,18 @@ interface MatchmakingModalProps {
   onCancel: () => void;
 }
 
+const dummyAvatars = Array.from({ length: 8 }).map((_, i) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 800}`);
 
-const dummyAvatars = Array.from({ length: 6 }).map((_, i) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 600}`);
-
-const VSBadge = () => (
-  <div className="w-16 h-16 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-full flex items-center justify-center p-1 shadow-[0_0_20px_rgba(234,179,8,0.5)] transform -rotate-12">
-    <div className="w-full h-full rounded-full border border-yellow-200/50 flex items-center justify-center">
-      <span className="text-2xl font-black text-red-950 italic">VS</span>
-    </div>
-  </div>
-);
+const mapNodes = [
+  { top: '40%', left: '20%' },
+  { top: '70%', left: '50%' },
+  { top: '40%', left: '80%' },
+  { top: '20%', left: '40%' }, 
+  { top: '80%', left: '25%' },
+  { top: '25%', left: '70%' },
+  { top: '65%', left: '85%' },
+  { top: '50%', left: '10%' },
+];
 
 export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, preferredColor, onMatchFound, onCancel }) => {
   const [seconds, setSeconds] = useState(0);
@@ -39,7 +41,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
       const activeColors = data.players.map(p => p.color);
       setTimeout(() => {
         onMatchFound(data.gameId, data.assignedColor, activeColors, data.players);
-      }, 2500);
+      }, 3000); 
     };
 
     socketService.socket?.on('match_found', handleMatchFound);
@@ -65,127 +67,92 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
 
   const opponents = foundPlayers.filter(p => p.id !== socketService.socket?.id);
 
-  const PlayerSlot = ({ avatar, name, isFound, delayStr, isLocal }: { avatar?: string, name?: string, isFound: boolean, delayStr?: string, isLocal?: boolean }) => {
-    const diceAnimClass = isLocal ? '' : (isFound ? 'animate-dice-stop' : 'animate-dice-spin-wild');
-    
-    return (
-      <div className="flex flex-col items-center relative z-10">
-        <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white p-1 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-          <div className="w-full h-full border-2 border-red-600 relative overflow-hidden bg-slate-800 flex items-center justify-center" style={{ perspective: '800px' }}>
-            
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_70%)]" />
-            
-            {/* 3D Spinning Dice containing avatars */}
-            <div className={`relative w-16 h-16 sm:w-20 sm:h-20 ${diceAnimClass}`} style={{ animationDelay: delayStr }}>
-              
-              {/* Front - Target Avatar */}
-              <div className="dice-face bg-slate-200 [transform:translateZ(32px)] sm:[transform:translateZ(40px)] overflow-hidden">
-                <img src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=opponent`} alt={name} className="w-full h-full object-contain p-1.5" />
-              </div>
-              
-              {/* Back */}
-              <div className="dice-face bg-slate-200 [transform:rotateY(180deg)_translateZ(32px)] sm:[transform:rotateY(180deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[1]} className="w-full h-full object-contain p-1.5" />
-              </div>
-              
-              {/* Right */}
-              <div className="dice-face bg-slate-200 [transform:rotateY(90deg)_translateZ(32px)] sm:[transform:rotateY(90deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[2]} className="w-full h-full object-contain p-1.5" />
-              </div>
-              
-              {/* Left */}
-              <div className="dice-face bg-slate-200 [transform:rotateY(-90deg)_translateZ(32px)] sm:[transform:rotateY(-90deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[3]} className="w-full h-full object-contain p-1.5" />
-              </div>
-              
-              {/* Top */}
-              <div className="dice-face bg-slate-200 [transform:rotateX(90deg)_translateZ(32px)] sm:[transform:rotateX(90deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[4]} className="w-full h-full object-contain p-1.5" />
-              </div>
-              
-              {/* Bottom */}
-              <div className="dice-face bg-slate-200 [transform:rotateX(-90deg)_translateZ(32px)] sm:[transform:rotateX(-90deg)_translateZ(40px)] overflow-hidden">
-                <img src={dummyAvatars[5]} className="w-full h-full object-contain p-1.5" />
-              </div>
-              
-            </div>
-            
-            <div className="absolute inset-0 shadow-[inset_0_0_24px_rgba(0,0,0,0.8)] pointer-events-none" />
-          </div>
-        </div>
-        <span className="mt-2 text-white font-bold drop-shadow-md min-h-[1.5rem] text-sm sm:text-base text-center">
-          {isFound || isLocal ? (name || 'Opponent') : 'Rolling...'}
-        </span>
-      </div>
-    );
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-red-950/95 backdrop-blur-md animate-fade-in sm:p-4">
-      <div className="relative w-full h-full sm:h-auto sm:max-w-lg bg-gradient-to-b from-red-800 to-red-950 sm:rounded-[2.5rem] shadow-2xl flex flex-col items-center overflow-hidden border-2 border-red-900/50">
+      <div className="relative w-full h-full sm:h-auto sm:max-w-xl bg-gradient-to-b from-red-800 to-red-950 sm:rounded-[2.5rem] shadow-2xl flex flex-col items-center overflow-hidden border-2 border-red-900/50">
         
-        {/* Top Header Section */}
-        <div className="w-full pt-10 pb-6 px-6 flex flex-col items-center">
+        <div className="w-full pt-8 pb-6 px-6 flex flex-col items-center">
           
           <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 via-yellow-400 to-yellow-600 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] mb-6 tracking-wide text-center">
             ONLINE MULTIPLAYER
           </h1>
 
-          {/* Info Table */}
-          <div className="w-full bg-red-900/80 rounded-xl border border-red-700/50 overflow-hidden shadow-inner mb-8">
-            <div className="flex w-full divide-x divide-red-800">
-              <div className="flex-1 p-3 text-center">
-                <div className="text-red-200 text-xs font-bold uppercase tracking-wider mb-1">Game Mode</div>
-                <div className="text-white font-black flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 rounded-full bg-yellow-400 flex items-center justify-center text-[10px] text-yellow-900">ðŸ‘‘</span>
-                  Classic
-                </div>
-              </div>
-              <div className="flex-1 p-3 text-center">
-                <div className="text-red-200 text-xs font-bold uppercase tracking-wider mb-1">Entry Amount</div>
-                <div className="text-yellow-400 font-black text-lg">
-                  1,000
-                </div>
+          {/* Local Player */}
+          <div className="flex flex-col items-center relative z-20 mb-6">
+            <div className={`w-24 h-24 bg-white p-1 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.8)] relative z-20 transition-all duration-500 ${isMatchFound ? 'shadow-[0_0_30px_rgba(52,211,153,0.8)] border-2 border-emerald-400' : ''}`}>
+              <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
+                <img src={currentUser?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=local'} alt="Me" className="w-full h-full object-cover" />
               </div>
             </div>
+            <span className="mt-2 text-white font-black text-sm drop-shadow-md bg-black/50 px-4 py-1 rounded-full">
+              {currentUser?.displayName || 'Guest'}
+            </span>
           </div>
 
-          {/* Matchmaking Arena */}
-          {mode === 2 ? (
-            <div className="w-full flex flex-col items-center relative">
-              <PlayerSlot avatar={currentUser?.avatar} name={currentUser?.displayName || 'Guest'} isFound={true} />
-              <div className="relative z-20 -my-4 sm:-my-6">
-                <VSBadge />
+          {/* World Map Container */}
+          <div className="w-full h-64 sm:h-72 relative bg-blue-950/50 border border-blue-500/30 rounded-3xl shadow-[inset_0_0_50px_rgba(30,58,138,0.5)]">
+            <Globe className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] text-blue-500/20 stroke-[0.5] animate-spin-slow pointer-events-none" />
+            
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_1px,transparent_1px)] bg-[size:20px_20px]" />
+            
+            {!isMatchFound && mapNodes.map((node, idx) => (
+              <div 
+                key={idx} 
+                className="absolute w-8 h-8 rounded-full border border-blue-400/50 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 animate-pulse bg-slate-900"
+                style={{ top: node.top, left: node.left, animationDelay: `${idx * 0.2}s` }}
+              >
+                <img src={dummyAvatars[idx]} className="w-full h-full object-cover opacity-60 mix-blend-luminosity" />
               </div>
-              <PlayerSlot avatar={opponents[0]?.profile?.avatar} name={opponents[0]?.profile?.displayName} isFound={isMatchFound} />
-            </div>
-          ) : (
-            <div className="w-full grid grid-cols-2 gap-x-8 gap-y-4 sm:gap-x-12 sm:gap-y-8 relative place-items-center">
-              <PlayerSlot avatar={currentUser?.avatar} name={currentUser?.displayName || 'Guest'} isFound={true} />
-              <PlayerSlot avatar={opponents[0]?.profile?.avatar} name={opponents[0]?.profile?.displayName} isFound={isMatchFound} delayStr="-0.3s" />
-              <PlayerSlot avatar={opponents[1]?.profile?.avatar} name={opponents[1]?.profile?.displayName} isFound={isMatchFound} delayStr="-0.6s" />
-              <PlayerSlot avatar={opponents[2]?.profile?.avatar} name={opponents[2]?.profile?.displayName} isFound={isMatchFound} delayStr="-0.9s" />
-              
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                <VSBadge />
-              </div>
-            </div>
-          )}
+            ))}
 
-          {/* Footer Area */}
-          <div className="mt-8 flex flex-col items-center">
+            {isMatchFound && opponents.map((opp, idx) => (
+              <div 
+                key={idx} 
+                className="absolute flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 z-20 animate-pop-out"
+                style={{ top: mapNodes[idx].top, left: mapNodes[idx].left }}
+              >
+                <div className="w-16 h-16 rounded-full border-2 border-emerald-400 bg-white p-0.5 shadow-[0_0_20px_rgba(52,211,153,0.8)]">
+                  <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
+                    <img src={opp?.profile?.avatar || dummyAvatars[idx]} className="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <span className="mt-1 text-xs text-white font-bold bg-black/60 px-2 py-0.5 rounded-full whitespace-nowrap">
+                  {opp?.profile?.displayName || `Player ${idx + 2}`}
+                </span>
+              </div>
+            ))}
+            
+            {isMatchFound && (
+              <svg className="absolute inset-0 w-full h-full overflow-visible z-10 pointer-events-none drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]">
+                {opponents.map((opp, idx) => (
+                  <line 
+                    key={idx}
+                    x1="50%" 
+                    y1="-80px" 
+                    x2={mapNodes[idx].left} 
+                    y2={mapNodes[idx].top}
+                    stroke="#34d399" 
+                    strokeWidth="3"
+                    className="animate-laser"
+                  />
+                ))}
+              </svg>
+            )}
+          </div>
+
+          <div className="mt-6 flex flex-col items-center">
             {isMatchFound ? (
-              <div className="text-emerald-400 font-black text-xl animate-pulse">MATCH FOUND!</div>
+              <div className="text-emerald-400 font-black text-xl animate-pulse">ESTABLISHING CONNECTION...</div>
             ) : (
               <>
                 <div className="flex items-center gap-2 text-yellow-400 font-bold mb-4">
                   <Search className="w-5 h-5 animate-pulse" />
-                  <span>SEARCHING FOR PLAYERS...</span>
+                  <span>SCANNING GLOBAL NETWORK...</span>
                 </div>
                 
                 <div className="bg-black/50 border border-slate-700 rounded-full px-6 py-2 flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-50 flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-emerald-600" />
+                  <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-white font-mono font-bold text-xl">{formatTime(seconds)}</span>
                 </div>
@@ -194,10 +161,9 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
           </div>
         </div>
 
-        {/* Back/Cancel Button */}
         <button 
           onClick={() => { socketService.leaveMatchmaking(); onCancel(); }}
-          className="absolute bottom-6 left-6 w-12 h-12 bg-blue-600 border-2 border-blue-400 rounded-lg shadow-lg flex items-center justify-center hover:bg-blue-500 active:scale-95 transition-all"
+          className="absolute bottom-6 left-6 w-12 h-12 bg-red-600 border-2 border-red-400 rounded-lg shadow-lg flex items-center justify-center hover:bg-red-500 active:scale-95 transition-all z-30"
         >
           <X className="w-8 h-8 text-white font-black" />
         </button>
@@ -206,10 +172,3 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     </div>
   );
 };
-
-
-
-
-
-
-
