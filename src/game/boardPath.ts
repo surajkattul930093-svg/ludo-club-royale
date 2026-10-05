@@ -145,8 +145,8 @@ export const PLAYER_START_INDEX: Record<PlayerColor, number> = {
 /**
  * 8 Safe Cells on the main track: 4 player start cells + 4 neutral star cells
  */
-export const SAFE_CELL_INDICES: number[] = [0, 9, 13, 21, 26, 34, 39, 47];
-export const SAFE_CELL_BOX_NUMBERS: number[] = [1, 10, 14, 22, 27, 35, 40, 48];
+export const SAFE_CELL_INDICES: number[] = [0, 8, 13, 21, 26, 34, 39, 47];
+export const SAFE_CELL_BOX_NUMBERS: number[] = [1, 9, 14, 22, 27, 35, 40, 48];
 export const SAFE_CELL_SET = new Set(SAFE_CELL_INDICES);
 
 export interface HomePathCell {
