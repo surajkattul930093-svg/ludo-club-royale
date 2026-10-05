@@ -91,6 +91,12 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
     socketService.connect();
     socketService.joinMatchmaking(mode, currentUser, preferredColor);
 
+    const handleProgress = (data: { players: any[], mode: number }) => {
+      if (!isMatchFound) {
+        setFoundPlayers(data.players);
+      }
+    };
+
     const handleMatchFound = (data: { gameId: string; assignedColor: PlayerColor; players: {id: string, color: PlayerColor, profile?: any}[] }) => {
       setIsMatchFound(true);
       setFoundPlayers(data.players);
@@ -100,6 +106,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
       }, 3500); 
     };
 
+    socketService.socket?.on('matchmaking_progress', handleProgress);
     socketService.socket?.on('match_found', handleMatchFound);
 
     const timer = setInterval(() => {
@@ -108,6 +115,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
 
     return () => {
       clearInterval(timer);
+      socketService.socket?.off('matchmaking_progress', handleProgress);
       socketService.socket?.off('match_found', handleMatchFound);
       if (!isMatchFound) {
         socketService.leaveMatchmaking();
@@ -143,7 +151,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
                  <TrainWindowSlot 
                    avatar={opponents[0]?.profile?.avatar} 
                    name={opponents[0]?.profile?.displayName} 
-                   isFound={isMatchFound} 
+                   isFound={!!opponents[0] || isMatchFound} 
                    delayStr="0s" 
                  />
               </div>
@@ -153,7 +161,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
                 <TrainWindowSlot 
                    avatar={opponents[0]?.profile?.avatar} 
                    name={opponents[0]?.profile?.displayName} 
-                   isFound={isMatchFound} 
+                   isFound={!!opponents[0] || isMatchFound} 
                    delayStr="0.1s" 
                 />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-[-1rem]">
@@ -162,13 +170,13 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
                 <TrainWindowSlot 
                    avatar={opponents[1]?.profile?.avatar} 
                    name={opponents[1]?.profile?.displayName} 
-                   isFound={isMatchFound} 
+                   isFound={!!opponents[1] || isMatchFound} 
                    delayStr="0.25s" 
                 />
                 <TrainWindowSlot 
                    avatar={opponents[2]?.profile?.avatar} 
                    name={opponents[2]?.profile?.displayName} 
-                   isFound={isMatchFound} 
+                   isFound={!!opponents[2] || isMatchFound} 
                    delayStr="0.4s" 
                 />
               </div>
@@ -177,7 +185,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
 
           <div className="mt-6 flex flex-col items-center">
             {isMatchFound ? (
-              <div className="text-emerald-400 font-black text-xl animate-pulse">TRAIN STOPPING...</div>
+              <div className="text-emerald-400 font-black text-xl animate-pulse">MATCH STARTING...</div>
             ) : (
               <>
                 <div className="bg-black/50 border border-slate-700 rounded-full px-6 py-2 flex items-center gap-3">
@@ -186,6 +194,7 @@ export const MatchmakingModal: React.FC<MatchmakingModalProps> = ({ mode = 2, pr
                   </div>
                   <span className="text-white font-mono font-bold text-xl">{formatTime(seconds)}</span>
                 </div>
+                <span className="text-blue-300 font-bold mt-3 animate-pulse">Waiting for {mode - foundPlayers.length} more player(s)...</span>
               </>
             )}
           </div>

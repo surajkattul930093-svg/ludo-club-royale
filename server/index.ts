@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
@@ -89,7 +89,10 @@ io.on('connection', (socket: Socket) => {
       queue.push({ socketId: socket.id, profile: data?.profile, preferredColor: data?.preferredColor });
     }
 
-    io.emit(`queue_update_${mode}`, { count: queue.length });
+    const currentGroup = queue.map(p => ({ id: p.socketId, profile: p.profile }));
+    queue.forEach(p => {
+      io.to(p.socketId).emit('matchmaking_progress', { players: currentGroup, mode });
+    });
 
     if (queue.length >= mode) {
       console.log(`[Matchmaking] Found enough players for ${mode}p game!`);
@@ -138,8 +141,13 @@ io.on('connection', (socket: Socket) => {
   socket.on('leave_queue', () => {
     waitingPlayers2 = waitingPlayers2.filter(p => p.socketId !== socket.id);
     waitingPlayers4 = waitingPlayers4.filter(p => p.socketId !== socket.id);
-    io.emit('queue_update_2', { count: waitingPlayers2.length });
-    io.emit('queue_update_4', { count: waitingPlayers4.length });
+    
+    waitingPlayers2.forEach(p => {
+      io.to(p.socketId).emit('matchmaking_progress', { players: waitingPlayers2.map(x => ({ id: x.socketId, profile: x.profile })), mode: 2 });
+    });
+    waitingPlayers4.forEach(p => {
+      io.to(p.socketId).emit('matchmaking_progress', { players: waitingPlayers4.map(x => ({ id: x.socketId, profile: x.profile })), mode: 4 });
+    });
     console.log(`[Queue] Player left: ${socket.id}`);
   });
 
@@ -211,8 +219,9 @@ io.on('connection', (socket: Socket) => {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`ðŸš€ Multiplayer Server running on port ${PORT}`);
+  console.log(`Ã°Å¸Å¡â‚¬ Multiplayer Server running on port ${PORT}`);
 });
+
 
 
 
