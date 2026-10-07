@@ -371,6 +371,9 @@ export class GameEngine {
     );
 
     if (captures.length > 0) {
+      const capId = Math.random().toString();
+      this.updateState({ explosions: [...(this.state.explosions || []), { id: capId, index: finalPathIndex as number, color: currentColor }] });
+      setTimeout(() => { if(!this.isDestroyed) this.updateState({ explosions: (this.state.explosions || []).filter(e => e.id !== capId) }); }, 1000);
       didCapture = true;
       if (this.state.soundEnabled) {
         AudioService.getInstance().playCapture();
@@ -601,6 +604,9 @@ export class GameEngine {
       const dest = GameRules.calculateDestination(token.stepsFromStart, token.state, diceValue);
       const captures = GameRules.checkCapture(color, dest, this.state.players);
       if (captures.length > 0) {
+      const capId = Math.random().toString();
+      this.updateState({ explosions: [...(this.state.explosions || []), { id: capId, index: finalPathIndex as number, color: currentColor }] });
+      setTimeout(() => { if(!this.isDestroyed) this.updateState({ explosions: (this.state.explosions || []).filter(e => e.id !== capId) }); }, 1000);
         return id;
       }
     }
@@ -719,6 +725,7 @@ export class GameEngine {
     }
   }
 }
+
 
 
 

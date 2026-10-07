@@ -276,6 +276,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
             <div style={{ transform: `rotate(${boardRotation}deg)`, transition: 'transform 0.5s' }}><GameBoard
               tokens={allTokens}
               animatingToken={gameState.animatingToken}
+                explosions={gameState.explosions}
               isAnimating={isAnimating}
               movableTokenIds={gameState.movableTokenIds}
               selectedTokenId={gameState.selectedTokenId}
@@ -316,6 +317,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
     </div>
   );
 };
+
 
 
 

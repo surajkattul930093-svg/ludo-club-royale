@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AudioService } from '../../services/AudioService';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -25,13 +25,13 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary:
-      'bg-gradient-to-b from-amber-400 via-yellow-500 to-amber-600 text-slate-950 border-amber-300 shadow-[0_4px_14px_rgba(245,158,11,0.5),inset_0_1px_2px_rgba(255,255,255,0.7)] hover:brightness-110 active:translate-y-0.5',
+      'bg-gradient-to-b from-amber-300 via-yellow-400 to-amber-500 text-amber-950 border-t border-l border-r border-amber-300 border-b-[6px] border-b-amber-700 shadow-xl hover:brightness-110 active:border-b-0 active:translate-y-[6px]',
     secondary:
-      'bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 text-slate-100 border-slate-600 shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(255,255,255,0.2)] hover:bg-slate-700 active:translate-y-0.5',
+      'bg-gradient-to-b from-slate-600 via-slate-700 to-slate-800 text-white border-t border-l border-r border-slate-500 border-b-[6px] border-b-slate-900 shadow-xl hover:brightness-110 active:border-b-0 active:translate-y-[6px]',
     accent:
-      'bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 text-white border-blue-400 shadow-[0_4px_14px_rgba(37,99,235,0.5),inset_0_1px_2px_rgba(255,255,255,0.5)] hover:brightness-110 active:translate-y-0.5',
+      'bg-gradient-to-b from-blue-400 via-blue-500 to-blue-600 text-white border-t border-l border-r border-blue-400 border-b-[6px] border-b-blue-800 shadow-xl hover:brightness-110 active:border-b-0 active:translate-y-[6px]',
     danger:
-      'bg-gradient-to-b from-red-500 via-red-600 to-red-700 text-white border-red-400 shadow-[0_4px_14px_rgba(220,38,38,0.5),inset_0_1px_2px_rgba(255,255,255,0.5)] hover:brightness-110 active:translate-y-0.5',
+      'bg-gradient-to-b from-red-400 via-red-500 to-red-600 text-white border-t border-l border-r border-red-400 border-b-[6px] border-b-red-900 shadow-xl hover:brightness-110 active:border-b-0 active:translate-y-[6px]',
   }[variant];
 
   const sizeStyles = {
@@ -43,7 +43,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       onClick={handleClick}
-      className={`border inline-flex items-center justify-center gap-2 select-none uppercase transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles} ${sizeStyles} ${
+      className={`inline-flex items-center justify-center gap-2 select-none uppercase transition-all duration-75 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles} ${sizeStyles} ${
         fullWidth ? 'w-full' : ''
       } ${className}`}
       {...props}

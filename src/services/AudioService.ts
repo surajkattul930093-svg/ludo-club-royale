@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AudioService provides sound effects for game actions.
  * Synthesized with the Web Audio API for zero external asset dependencies,
  * crisp low-latency playback, and offline support.
@@ -423,6 +423,7 @@ export class AudioService {
         gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.15 + 0.1);
         osc.connect(gain); gain.connect(ctx.destination);
         osc.start(now + i * 0.15); osc.stop(now + i * 0.15 + 0.1);
+      }
       });
     } else if (['1f621', '1f92c'].includes(emoji)) {
       const audio = new Audio('/sounds/angry.mp3');
@@ -469,3 +470,4 @@ export class AudioService {
     }
   }
 }
+
