@@ -1,4 +1,4 @@
-﻿import { GameMode, GameState, DebugMovementLog } from '../types/game';
+import { GameMode, GameState, DebugMovementLog } from '../types/game';
 import { Player, PlayerColor, PlayerToken } from '../types/player';
 import { TokenState } from '../types/token';
 import { createInitialGameState } from './GameState';
@@ -605,8 +605,9 @@ export class GameEngine {
       const captures = GameRules.checkCapture(color, dest, this.state.players);
       if (captures.length > 0) {
       const capId = Math.random().toString();
-      this.updateState({ explosions: [...(this.state.explosions || []), { id: capId, index: finalPathIndex as number, color: currentColor }] });
-      setTimeout(() => { if(!this.isDestroyed) this.updateState({ explosions: (this.state.explosions || []).filter(e => e.id !== capId) }); }, 1000);
+      const logicalPos = getLogicalPosition(color, id, 'ON_BOARD', dest);
+      this.updateState({ explosions: [...((this.state as any).explosions || []), { id: capId, index: logicalPos.pathIndex as number, color: color }] } as any);
+      setTimeout(() => { if(!this.isDestroyed) this.updateState({ explosions: ((this.state as any).explosions || []).filter((e: any) => e.id !== capId) } as any); }, 1000);
         return id;
       }
     }

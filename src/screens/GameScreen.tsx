@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { GameEngine } from '../game/GameEngine';
 import { GameMode, GameState } from '../types/game';
 import { Token } from '../types/token';
@@ -254,7 +254,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         isAnimating={isAnimating}
         debugMode={gameState.debugMode}
         debugBoard={gameState.debugBoard}
-              boardRotation={boardRotation}
         debugLog={gameState.debugLog}
         onToggleSound={onToggleSound}
         onToggleDebug={() => engine.toggleDebugMode()}
