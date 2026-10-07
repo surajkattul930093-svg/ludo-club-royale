@@ -1,4 +1,4 @@
-import { Player, PlayerColor } from './player';
+﻿import { Player, PlayerColor } from './player';
 
 export type GameMode = 'pass_and_play' | 'vs_computer' | '2_player' | 'online_multiplayer';
 
@@ -57,5 +57,7 @@ export interface GameState {
   debugMode: boolean;
   debugBoard: boolean;
   debugLog: DebugMovementLog | null;
+  explosions?: { id: string, index: number, color: PlayerColor }[];
 }
+
 

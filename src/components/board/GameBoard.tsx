@@ -14,6 +14,7 @@ import {
 import { PlayerHome } from './PlayerHome';
 import { SafeCellStar } from './SafeCell';
 import { Token } from '../tokens/Token';
+import { ParticleBurst } from '../effects/ParticleBurst';
 
 interface GameBoardProps {
   tokens: TokenType[];
@@ -25,6 +26,7 @@ interface GameBoardProps {
   debugBoard?: boolean;
   boardRotation?: number;
   onTokenClick: (tokenId: number) => void;
+  explosions?: { id: string, index: number, color: PlayerColor }[];
 }
 
 /**
@@ -148,6 +150,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   debugBoard = false,
   boardRotation = 0,
   onTokenClick,
+  explosions = [],
 }) => {
   // Resolve current visual position for each token (accounting for real-time animatingToken)
   const tokenVisualPositions = useMemo(() => {
@@ -799,5 +802,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     </div>
   );
 };
+
 
 
