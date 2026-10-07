@@ -410,6 +410,9 @@ export class AudioService {
     if (!ctx) return;
     const now = ctx.currentTime;
     if (['1f602', '1f61c', '1f973'].includes(emoji)) {
+      const audio = new Audio('/sounds/laugh.mp3');
+      audio.play().catch(() => {
+
       for(let i=0; i<4; i++) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -420,8 +423,11 @@ export class AudioService {
         gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.15 + 0.1);
         osc.connect(gain); gain.connect(ctx.destination);
         osc.start(now + i * 0.15); osc.stop(now + i * 0.15 + 0.1);
-      }
+      });
     } else if (['1f621', '1f92c'].includes(emoji)) {
+      const audio = new Audio('/sounds/angry.mp3');
+      audio.play().catch(() => {
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
@@ -431,7 +437,11 @@ export class AudioService {
       gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
       osc.connect(gain); gain.connect(ctx.destination);
       osc.start(now); osc.stop(now + 0.5);
+      });
     } else if (['1f62d', '1f631'].includes(emoji)) {
+      const audio = new Audio('/sounds/cry.mp3');
+      audio.play().catch(() => {
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
@@ -441,7 +451,11 @@ export class AudioService {
       gain.gain.linearRampToValueAtTime(0.01, now + 0.6);
       osc.connect(gain); gain.connect(ctx.destination);
       osc.start(now); osc.stop(now + 0.6);
+      });
     } else {
+      const audio = new Audio('/sounds/wow.mp3');
+      audio.play().catch(() => {
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
@@ -451,6 +465,7 @@ export class AudioService {
       gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
       osc.connect(gain); gain.connect(ctx.destination);
       osc.start(now); osc.stop(now + 0.3);
+      });
     }
   }
 }
