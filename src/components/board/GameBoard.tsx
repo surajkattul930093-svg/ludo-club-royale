@@ -849,7 +849,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                       : ''
                   }`}
                 >
-                  <div className={`w-full h-full relative ${isTokenFinished ? 'animate-bounce' : ''}`}>
+                  <div className={`w-full h-full relative ${isTokenFinished ? 'animate-bounce will-change-transform' : ''}`}>
                     <Token
                         id={token.id}
                         rotation={boardRotation}
@@ -864,11 +864,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                     />
                     {isTokenFinished && rank <= 3 && (
                       <div className={`absolute -top-[50%] left-1/2 -translate-x-1/2 z-50 pointer-events-none ${
-                        rank === 1 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]' : 
-                        rank === 2 ? 'text-slate-300 drop-shadow-[0_0_8px_rgba(224,224,224,0.8)]' : 
-                        'text-amber-600 drop-shadow-[0_0_8px_rgba(205,127,50,0.8)]'
+                        rank === 1 ? 'text-yellow-400' : 
+                        rank === 2 ? 'text-slate-300' : 
+                        'text-amber-600'
                       }`}>
-                        <Crown className="w-6 h-6 fill-current animate-pulse" />
+                        <Crown className="w-6 h-6 fill-current animate-pulse will-change-[opacity]" />
                       </div>
                     )}
                   </div>
