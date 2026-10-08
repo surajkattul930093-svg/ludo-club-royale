@@ -15,6 +15,7 @@ import { PlayerHome } from './PlayerHome';
 import { SafeCellStar } from './SafeCell';
 import { Token } from '../tokens/Token';
 import { ParticleBurst } from '../effects/ParticleBurst';
+import { Crown } from 'lucide-react';
 
 interface GameBoardProps {
   tokens: TokenType[];
@@ -825,6 +826,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                 token.color === currentTurnColor &&
                 movableTokenIds.includes(token.id);
               const isSelected = selectedTokenId === token.id && token.color === currentTurnColor;
+              const finishedPlayer = finishedPlayers.find(p => p.color === token.color);
+              const isTokenFinished = token.state === 'FINISHED' && finishedPlayer;
+              const rank = finishedPlayer?.rank || 4;
 
               return (
                 <div
@@ -845,18 +849,29 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                       : ''
                   }`}
                 >
-                  <Token
-                      id={token.id}
-                      rotation={boardRotation}
-                    color={token.color}
-                    isMovable={isMovable}
-                    isSelected={isSelected}
-                    onClick={() => {
-                      if (!isAnimating) {
-                        onTokenClick(token.id);
-                      }
-                    }}
-                  />
+                  <div className={`w-full h-full relative ${isTokenFinished ? 'animate-bounce' : ''}`}>
+                    <Token
+                        id={token.id}
+                        rotation={boardRotation}
+                      color={token.color}
+                      isMovable={isMovable}
+                      isSelected={isSelected}
+                      onClick={() => {
+                        if (!isAnimating) {
+                          onTokenClick(token.id);
+                        }
+                      }}
+                    />
+                    {isTokenFinished && rank <= 3 && (
+                      <div className={`absolute -top-[50%] left-1/2 -translate-x-1/2 z-50 pointer-events-none ${
+                        rank === 1 ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]' : 
+                        rank === 2 ? 'text-slate-300 drop-shadow-[0_0_8px_rgba(224,224,224,0.8)]' : 
+                        'text-amber-600 drop-shadow-[0_0_8px_rgba(205,127,50,0.8)]'
+                      }`}>
+                        <Crown className="w-6 h-6 fill-current animate-pulse" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}
