@@ -1,4 +1,4 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
 @layer base {
   body {
@@ -321,4 +321,34 @@
 }
 .animate-flash-burst {
   animation: flash-burst 0.4s ease-out forwards;
+}
+
+
+@keyframes goldenFreeze {
+  0% { opacity: 0; transform: scale(0.8) translateY(-5px); filter: blur(4px); }
+  100% { opacity: 0.85; transform: scale(1) translateY(0); filter: blur(0px); }
+}
+@keyframes sparkleStar {
+  0% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+  100% { opacity: 0; transform: scale(0) rotate(360deg); }
+}
+.frost-cell {
+  background: linear-gradient(135deg, rgba(255,215,0,0.95) 0%, rgba(255,165,0,0.85) 100%);
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.7), 0 0 20px rgba(255,215,0,0.8);
+  animation: goldenFreeze 1.5s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+  opacity: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+.frost-yard {
+  border-radius: 20px;
+}
+.frost-star {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #fff 10%, transparent 60%);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: sparkleStar 2s infinite ease-in-out;
 }
