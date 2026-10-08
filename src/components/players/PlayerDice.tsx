@@ -242,7 +242,6 @@ export const PlayerDice: React.FC<PlayerDiceProps> = ({
         const tLanding = setTimeout(() => {
           setVisualScale(0.96);
           setTransitionStyle('transform 130ms cubic-bezier(0.34, 1.56, 0.64, 1)');
-          AudioService.getInstance().playDiceLand();
         }, 640);
         timersRef.current.push(tLanding);
 

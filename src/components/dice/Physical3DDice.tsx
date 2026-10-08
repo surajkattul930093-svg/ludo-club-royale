@@ -110,7 +110,6 @@ export const Physical3DDice: React.FC<Physical3DDiceProps> = ({
       // STEP 6 & 7: Landing impact & bounce
       const landTimeout = setTimeout(() => {
         setDiceState('landing');
-        AudioService.getInstance().playDiceLand();
       }, 760);
 
       // STEP 8: Settled

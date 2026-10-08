@@ -129,10 +129,6 @@ export const Dice: React.FC<DiceProps> = ({
       const nextY = curY + 720 + deltaY;
       anglesRef.current = { x: nextX, y: nextY };
       setRotation({ x: nextX, y: nextY });
-
-      setTimeout(() => {
-        AudioService.getInstance().playDiceLand();
-      }, 550);
     } else if (value) {
       const base = TARGET_ANGLES[value] || TARGET_ANGLES[1];
       const curX = anglesRef.current.x;
