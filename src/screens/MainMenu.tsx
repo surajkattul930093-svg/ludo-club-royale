@@ -7,6 +7,7 @@ import { FeaturePlaceholderModal } from '../components/modals/FeaturePlaceholder
 import { ColorSelectionModal } from '../components/modals/ColorSelectionModal';
 import { MatchmakingModal } from '../components/modals/MatchmakingModal';
 import { ProfileModal } from '../components/modals/ProfileModal';
+import { PrivateRoomModal } from '../components/modals/PrivateRoomModal';
 import {
   Settings, Plus, Gift, CalendarCheck, Trophy, Store, 
   Users, Bot, Globe, Key, User, HelpCircle,
@@ -36,6 +37,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   const [onlineMatchMode, setOnlineMatchMode] = useState<2 | 4>(4);
   const [userProfile, setUserProfile] = useState<UserProfile>(authService.getCurrentUser());
   const [showOnlineModeSelect, setShowOnlineModeSelect] = useState(false);
+  const [privateRoomMode, setPrivateRoomMode] = useState<'create' | 'join' | null>(null);
 
   useEffect(() => {
     const unsubscribe = authService.subscribe((user) => {
@@ -240,7 +242,10 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             </button>
 
             <button 
-              onClick={() => openPlaceholder('Create Room', 'Create a private room for your friends.')}
+              onClick={() => {
+                setPrivateRoomMode('create');
+                setColorPickerMode('online_multiplayer');
+              }}
               className="relative overflow-hidden rounded-xl bg-gradient-to-b from-emerald-300 to-emerald-500 p-0.5 shadow-lg active:scale-95 transition-transform"
             >
               <div className="w-full h-full bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-lg flex flex-col items-center justify-center p-2 gap-1 border-b-4 border-emerald-800">
@@ -250,7 +255,10 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             </button>
 
             <button 
-              onClick={() => openPlaceholder('Join Room', 'Enter a room code to join your friends.')}
+              onClick={() => {
+                setPrivateRoomMode('join');
+                setColorPickerMode('online_multiplayer');
+              }}
               className="relative overflow-hidden rounded-xl bg-gradient-to-b from-pink-400 to-rose-500 p-0.5 shadow-lg active:scale-95 transition-transform"
             >
               <div className="w-full h-full bg-gradient-to-b from-pink-500 to-rose-600 rounded-lg flex flex-col items-center justify-center p-2 gap-1 border-b-4 border-rose-900">
@@ -322,7 +330,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
               if (colorPickerMode === 'online_multiplayer') {
                 setPreferredColor(colors[0]);
                 setColorPickerMode(null);
-                setIsMatchmakingOpen(true);
+                if (!privateRoomMode) {
+                  setIsMatchmakingOpen(true);
+                }
               } else {
                 onStartGame(colorPickerMode, colors);
               }
@@ -339,6 +349,19 @@ export const MainMenu: React.FC<MainMenuProps> = ({
               onStartGame('online_multiplayer', activeColors, color, gameId, players);
             }}
           onCancel={() => setIsMatchmakingOpen(false)}
+        />
+      )}
+
+      {privateRoomMode && !colorPickerMode && (
+        <PrivateRoomModal
+          mode={privateRoomMode}
+          profile={userProfile}
+          preferredColor={preferredColor}
+          onGameStart={(gameId, color, activeColors, players) => {
+            setPrivateRoomMode(null);
+            onStartGame('online_multiplayer', activeColors, color, gameId, players);
+          }}
+          onCancel={() => setPrivateRoomMode(null)}
         />
       )}
 

@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
@@ -135,6 +135,84 @@ io.on('connection', (socket: Socket) => {
         }
       });
       io.emit(`queue_update_${mode}`, { count: queue.length });
+    }
+  });
+
+  const privateRooms = new Map<string, { mode: number, players: any[] }>();
+
+  socket.on('create_private_room', (data: { mode: number, profile?: any, preferredColor?: string }) => {
+    const roomCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const mode = data.mode === 4 ? 4 : 2;
+    privateRooms.set(roomCode, { 
+      mode, 
+      players: [{ socketId: socket.id, profile: data.profile, preferredColor: data.preferredColor }] 
+    });
+    
+    socket.join(`lobby_${roomCode}`);
+    socket.emit('private_room_created', { roomCode });
+    io.to(`lobby_${roomCode}`).emit('private_room_update', { players: privateRooms.get(roomCode)?.players });
+  });
+
+  socket.on('join_private_room', (data: { roomCode: string, profile?: any, preferredColor?: string }) => {
+    const room = privateRooms.get(data.roomCode);
+    if (!room) {
+      return socket.emit('private_room_error', { message: 'Invalid Room Code!' });
+    }
+    if (room.players.length >= room.mode) {
+      return socket.emit('private_room_error', { message: 'Room is already full!' });
+    }
+    if (room.players.find(p => p.socketId === socket.id)) {
+      return; // Already in room
+    }
+
+    room.players.push({ socketId: socket.id, profile: data.profile, preferredColor: data.preferredColor });
+    socket.join(`lobby_${data.roomCode}`);
+    
+    io.to(`lobby_${data.roomCode}`).emit('private_room_update', { players: room.players });
+
+    // Start game if room is full
+    if (room.players.length === room.mode) {
+      console.log(`[Private Room] Starting game for room ${data.roomCode}`);
+      const matchPlayers = room.players;
+      const gameId = `game_private_${data.roomCode}_${Date.now()}`;
+
+      activeRooms[gameId] = { players: matchPlayers.map(p => p.socketId) };
+      const colors = ['blue', 'yellow', 'green', 'red'];
+      
+      const assignedColors: Record<string, string> = {};
+      const availableColors = [...colors];
+
+      matchPlayers.forEach(p => {
+        if (p.preferredColor && availableColors.includes(p.preferredColor)) {
+          assignedColors[p.socketId] = p.preferredColor;
+          availableColors.splice(availableColors.indexOf(p.preferredColor), 1);
+        }
+      });
+
+      matchPlayers.forEach(p => {
+        if (!assignedColors[p.socketId]) {
+          assignedColors[p.socketId] = availableColors.pop() || 'blue';
+        }
+      });
+      
+      matchPlayers.forEach((p) => {
+        const pColor = assignedColors[p.socketId];
+        socketGameMap[p.socketId] = { roomId: gameId, color: pColor };
+        activePlayerSockets.set(`${gameId}_${pColor}`, p.socketId);
+
+        const playerSocket = io.sockets.sockets.get(p.socketId);
+        if (playerSocket) {
+          playerSocket.join(gameId);
+          playerSocket.emit('match_found', {
+            gameId: gameId,
+            assignedColor: pColor,
+            activeColors: colors.slice(0, room.mode),
+            players: matchPlayers.map(mp => ({ id: mp.socketId, color: assignedColors[mp.socketId], profile: mp.profile }))
+          });
+        }
+      });
+      
+      privateRooms.delete(data.roomCode); // Clean up lobby
     }
   });
 
