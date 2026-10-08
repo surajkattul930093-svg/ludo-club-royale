@@ -1,4 +1,4 @@
-﻿import React, { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { PlayerColor } from '../../types/player';
 import { Token as TokenType } from '../../types/token';
 import { AnimatingTokenInfo } from '../../types/game';
@@ -140,6 +140,51 @@ const CurvedTurnArrow: React.FC<{
   );
 };
 
+const FROST_PATH: Record<PlayerColor, string[]> = {
+  blue: ['8 / 6 / 9 / 7', '8 / 5 / 9 / 6', '8 / 4 / 9 / 5', '8 / 3 / 9 / 4', '8 / 2 / 9 / 3', '7 / 2 / 8 / 3', '1 / 1 / 7 / 7'],
+  yellow: ['6 / 8 / 7 / 9', '5 / 8 / 6 / 9', '4 / 8 / 5 / 9', '3 / 8 / 4 / 9', '2 / 8 / 3 / 9', '2 / 9 / 3 / 10', '1 / 10 / 7 / 16'],
+  green: ['8 / 10 / 9 / 11', '8 / 11 / 9 / 12', '8 / 12 / 9 / 13', '8 / 13 / 9 / 14', '8 / 14 / 9 / 15', '9 / 14 / 10 / 15', '10 / 10 / 16 / 16'],
+  red: ['10 / 8 / 11 / 9', '11 / 8 / 12 / 9', '12 / 8 / 13 / 9', '13 / 8 / 14 / 9', '14 / 8 / 15 / 9', '14 / 7 / 15 / 8', '10 / 1 / 16 / 7']
+};
+
+const FROST_CENTER: Record<PlayerColor, string> = {
+  blue: 'polygon(0% 100%, 0% 0%, 50% 50%)',
+  yellow: 'polygon(0% 0%, 100% 0%, 50% 50%)',
+  green: 'polygon(100% 0%, 100% 100%, 50% 50%)',
+  red: 'polygon(100% 100%, 0% 100%, 50% 50%)'
+};
+
+const GoldenFrostOverlay: React.FC<{ color: PlayerColor }> = ({ color }) => {
+  const path = FROST_PATH[color];
+  const centerClip = FROST_CENTER[color];
+  return (
+    <>
+      <div 
+        style={{ gridArea: '7 / 7 / 10 / 10', clipPath: centerClip, animationDelay: '0s' }}
+        className="frost-cell"
+      >
+        <div className="frost-star" style={{ width: '15%', height: '15%', top: '45%', left: '45%', animationDelay: '0.2s' }} />
+      </div>
+      {path.map((gridArea, i) => (
+        <div
+          key={gridArea}
+          style={{ gridArea, animationDelay: `${(i + 1) * 0.4}s` }}
+          className={`border border-yellow-300/50 frost-cell ${i === 6 ? 'frost-yard' : ''} flex items-center justify-center relative overflow-hidden`}
+        >
+          <div className="frost-star" style={{ width: '40%', height: '40%', top: '10%', left: '10%', animationDelay: `${(i+1) * 0.4 + 0.1}s` }} />
+          <div className="frost-star" style={{ width: '30%', height: '30%', bottom: '15%', right: '15%', animationDelay: `${(i+1) * 0.4 + 0.5}s` }} />
+          {i === 6 && (
+            <>
+               <div className="frost-star" style={{ width: '15%', height: '15%', top: '40%', left: '40%', animationDelay: `${(i+1) * 0.4 + 1.2}s` }} />
+               <div className="frost-star" style={{ width: '20%', height: '20%', top: '20%', right: '30%', animationDelay: `${(i+1) * 0.4 + 0.8}s` }} />
+            </>
+          )}
+        </div>
+      ))}
+    </>
+  );
+};
+
 export const GameBoard: React.FC<GameBoardProps> = ({
   tokens,
   animatingToken,
@@ -225,6 +270,14 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
     return offsets;
   }, [tokenVisualPositions]);
+
+  const finishedColors = useMemo(() => {
+    const colors: PlayerColor[] = ['blue', 'yellow', 'green', 'red'];
+    return colors.filter(c => {
+       const playerTokens = tokens.filter(t => t.color === c);
+       return playerTokens.length === 4 && playerTokens.every(t => t.state === 'FINISHED');
+    });
+  }, [tokens]);
 
   return (
     <div className="relative w-full max-w-[560px] aspect-square mx-auto p-2 sm:p-3 md:p-3.5 select-none">
@@ -578,6 +631,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               {/* Row 14, Col 8: Curved Arrow turning LEFT */}
               <CurvedTurnArrow type="BOTTOM_TURN" />
             </div>
+
+            {finishedColors.map(color => (
+              <GoldenFrostOverlay key={color} color={color} />
+            ))}
           </div>
 
           {/* Normal Gameplay Movement Box Numbers (Always Visible on playable movement cells) */}
