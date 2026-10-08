@@ -275,13 +275,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({
             <div style={{ transform: `rotate(${boardRotation}deg)`, transition: 'transform 0.5s' }}><GameBoard
               tokens={allTokens}
               animatingToken={gameState.animatingToken}
-                explosions={gameState.explosions}
+              explosions={gameState.explosions}
               isAnimating={isAnimating}
               movableTokenIds={gameState.movableTokenIds}
               selectedTokenId={gameState.selectedTokenId}
               currentTurnColor={currentTurnColor}
               debugBoard={gameState.debugBoard}
               boardRotation={boardRotation}
+              finishedPlayers={gameState.rankings.map((color, idx) => ({ color, rank: idx + 1 }))}
               onTokenClick={handleTokenClick} /></div>
           </div>
 
@@ -292,7 +293,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         </div>
       </main>
 
-      {(!isSpectating || gameState.status === 'game_over') && (
+      {gameState.status === 'game_over' && (
       <VictoryModal
         isGameOver={gameState.status === 'game_over'}
         onSpectate={() => setIsSpectating(true)}

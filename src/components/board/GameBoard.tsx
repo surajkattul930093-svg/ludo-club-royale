@@ -27,6 +27,7 @@ interface GameBoardProps {
   boardRotation?: number;
   onTokenClick: (tokenId: number) => void;
   explosions?: { id: string, index: number, color: PlayerColor }[];
+  finishedPlayers?: { color: PlayerColor, rank: number }[];
 }
 
 /**
@@ -154,29 +155,30 @@ const FROST_CENTER: Record<PlayerColor, string> = {
   red: 'polygon(100% 100%, 0% 100%, 50% 50%)'
 };
 
-const GoldenFrostOverlay: React.FC<{ color: PlayerColor }> = ({ color }) => {
+const GoldenFrostOverlay: React.FC<{ color: PlayerColor; rank: number }> = ({ color, rank }) => {
   const path = FROST_PATH[color];
   const centerClip = FROST_CENTER[color];
+  const cellClass = `frost-cell-rank-${rank <= 3 ? rank : 3}`;
   return (
     <>
       <div 
         style={{ gridArea: '7 / 7 / 10 / 10', clipPath: centerClip, animationDelay: '0s' }}
-        className="frost-cell"
+        className={cellClass}
       >
         <div className="frost-star" style={{ width: '15%', height: '15%', top: '45%', left: '45%', animationDelay: '0.2s' }} />
       </div>
       {path.map((gridArea, i) => (
         <div
           key={gridArea}
-          style={{ gridArea, animationDelay: `${(i + 1) * 0.4}s` }}
-          className={`border border-yellow-300/50 frost-cell ${i === 6 ? 'frost-yard' : ''} flex items-center justify-center relative overflow-hidden`}
+          style={{ gridArea, animationDelay: `${(i + 1) * 0.8}s` }}
+          className={`border border-white/30 ${cellClass} ${i === 6 ? 'frost-yard' : ''} flex items-center justify-center relative overflow-hidden`}
         >
-          <div className="frost-star" style={{ width: '40%', height: '40%', top: '10%', left: '10%', animationDelay: `${(i+1) * 0.4 + 0.1}s` }} />
-          <div className="frost-star" style={{ width: '30%', height: '30%', bottom: '15%', right: '15%', animationDelay: `${(i+1) * 0.4 + 0.5}s` }} />
+          <div className="frost-star" style={{ width: '40%', height: '40%', top: '10%', left: '10%', animationDelay: `${(i+1) * 0.8 + 0.1}s` }} />
+          <div className="frost-star" style={{ width: '30%', height: '30%', bottom: '15%', right: '15%', animationDelay: `${(i+1) * 0.8 + 0.5}s` }} />
           {i === 6 && (
             <>
-               <div className="frost-star" style={{ width: '15%', height: '15%', top: '40%', left: '40%', animationDelay: `${(i+1) * 0.4 + 1.2}s` }} />
-               <div className="frost-star" style={{ width: '20%', height: '20%', top: '20%', right: '30%', animationDelay: `${(i+1) * 0.4 + 0.8}s` }} />
+               <div className="frost-star" style={{ width: '15%', height: '15%', top: '40%', left: '40%', animationDelay: `${(i+1) * 0.8 + 1.2}s` }} />
+               <div className="frost-star" style={{ width: '20%', height: '20%', top: '20%', right: '30%', animationDelay: `${(i+1) * 0.8 + 0.8}s` }} />
             </>
           )}
         </div>
@@ -196,6 +198,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   boardRotation = 0,
   onTokenClick,
   explosions = [],
+  finishedPlayers = [],
 }) => {
   // Resolve current visual position for each token (accounting for real-time animatingToken)
   const tokenVisualPositions = useMemo(() => {
@@ -271,13 +274,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     return offsets;
   }, [tokenVisualPositions]);
 
-  const finishedColors = useMemo(() => {
-    const colors: PlayerColor[] = ['blue', 'yellow', 'green', 'red'];
-    return colors.filter(c => {
-       const playerTokens = tokens.filter(t => t.color === c);
-       return playerTokens.length === 4 && playerTokens.every(t => t.state === 'FINISHED');
-    });
-  }, [tokens]);
+
 
   return (
     <div className="relative w-full max-w-[560px] aspect-square mx-auto p-2 sm:p-3 md:p-3.5 select-none">
@@ -632,8 +629,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               <CurvedTurnArrow type="BOTTOM_TURN" />
             </div>
 
-            {finishedColors.map(color => (
-              <GoldenFrostOverlay key={color} color={color} />
+            {finishedPlayers.map(p => (
+              <GoldenFrostOverlay key={p.color} color={p.color} rank={p.rank} />
             ))}
           </div>
 
