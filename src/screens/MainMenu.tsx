@@ -35,6 +35,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   const [isMatchmakingOpen, setIsMatchmakingOpen] = useState(false);
   const [onlineMatchMode, setOnlineMatchMode] = useState<2 | 4>(4);
   const [userProfile, setUserProfile] = useState<UserProfile>(authService.getCurrentUser());
+  const [showOnlineModeSelect, setShowOnlineModeSelect] = useState(false);
 
   useEffect(() => {
     const unsubscribe = authService.subscribe((user) => {
@@ -200,10 +201,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* Row 1: Play Online & Play with AI */}
           <div className="grid grid-cols-2 gap-3">
             <button 
-              onClick={() => {
-                setOnlineMatchMode(4);
-                setColorPickerMode('online_multiplayer');
-              }}
+              onClick={() => setShowOnlineModeSelect(true)}
               className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-yellow-300 to-orange-500 p-0.5 shadow-lg active:scale-95 transition-transform"
             >
               <div className="w-full h-full bg-gradient-to-b from-yellow-400 to-orange-600 rounded-[14px] flex items-center p-3 gap-2 border-b-4 border-orange-700">
@@ -342,6 +340,42 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             }}
           onCancel={() => setIsMatchmakingOpen(false)}
         />
+      )}
+
+      {showOnlineModeSelect && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl p-6 w-full max-w-xs shadow-2xl animate-scale-in text-center flex flex-col">
+            <h2 className="text-xl font-black text-white mb-6">Select Match Type</h2>
+            <div className="flex flex-col gap-3">
+              <button 
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg border-b-4 border-blue-800 active:border-b-0 active:translate-y-1 transition-all"
+                onClick={() => {
+                  setShowOnlineModeSelect(false);
+                  setOnlineMatchMode(2);
+                  setColorPickerMode('online_multiplayer');
+                }}
+              >
+                2 Players (1v1)
+              </button>
+              <button 
+                className="w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-3 px-4 rounded-xl shadow-lg border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 transition-all"
+                onClick={() => {
+                  setShowOnlineModeSelect(false);
+                  setOnlineMatchMode(4);
+                  setColorPickerMode('online_multiplayer');
+                }}
+              >
+                4 Players (Free for All)
+              </button>
+              <button 
+                className="mt-4 text-xs font-bold text-slate-400 hover:text-white transition-colors py-2" 
+                onClick={() => setShowOnlineModeSelect(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
