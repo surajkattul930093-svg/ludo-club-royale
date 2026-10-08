@@ -104,9 +104,6 @@ export class GameEngine {
 
     const diceValue = forcedValue ?? Math.floor(Math.random() * 6) + 1;
     this.rollCounter++;
-    if (this.state.soundEnabled) {
-      AudioService.getInstance().playDiceSound();
-    }
     const newConsecutiveSixes =
       diceValue === 6 ? this.state.consecutiveSixes + 1 : 0;
 
