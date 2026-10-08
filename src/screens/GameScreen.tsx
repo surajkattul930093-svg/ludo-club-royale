@@ -42,6 +42,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSpectating, setIsSpectating] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [showVictoryModal, setShowVictoryModal] = useState(false);
+
+  useEffect(() => {
+    if (gameState.status === 'game_over') {
+      const timer = setTimeout(() => {
+        setShowVictoryModal(true);
+      }, 30000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowVictoryModal(false);
+    }
+  }, [gameState.status]);
 
   const actionQueueRef = useRef<any[]>([]);
   const isProcessingQueueRef = useRef(false);
@@ -293,7 +305,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         </div>
       </main>
 
-      {gameState.status === 'game_over' && (
+      {showVictoryModal && (
       <VictoryModal
         isGameOver={gameState.status === 'game_over'}
         onSpectate={() => setIsSpectating(true)}

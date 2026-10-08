@@ -166,6 +166,8 @@ const GoldenFrostOverlay: React.FC<{ color: PlayerColor; rank: number }> = ({ co
         className={cellClass}
       >
         <div className="frost-star" style={{ width: '15%', height: '15%', top: '45%', left: '45%', animationDelay: '0.2s' }} />
+        <div className="frost-star" style={{ width: '10%', height: '10%', top: '35%', left: '55%', animationDelay: '0.6s' }} />
+        <div className="frost-star" style={{ width: '12%', height: '12%', top: '55%', left: '35%', animationDelay: '1.1s' }} />
       </div>
       {path.map((gridArea, i) => (
         <div
@@ -175,10 +177,18 @@ const GoldenFrostOverlay: React.FC<{ color: PlayerColor; rank: number }> = ({ co
         >
           <div className="frost-star" style={{ width: '40%', height: '40%', top: '10%', left: '10%', animationDelay: `${(i+1) * 0.8 + 0.1}s` }} />
           <div className="frost-star" style={{ width: '30%', height: '30%', bottom: '15%', right: '15%', animationDelay: `${(i+1) * 0.8 + 0.5}s` }} />
+          <div className="frost-star" style={{ width: '25%', height: '25%', top: '20%', right: '20%', animationDelay: `${(i+1) * 0.8 + 0.9}s` }} />
+          <div className="frost-star" style={{ width: '35%', height: '35%', bottom: '10%', left: '25%', animationDelay: `${(i+1) * 0.8 + 1.3}s` }} />
+          <div className="frost-star" style={{ width: '20%', height: '20%', top: '45%', left: '45%', animationDelay: `${(i+1) * 0.8 + 0.3}s` }} />
+          
           {i === 6 && (
             <>
                <div className="frost-star" style={{ width: '15%', height: '15%', top: '40%', left: '40%', animationDelay: `${(i+1) * 0.8 + 1.2}s` }} />
                <div className="frost-star" style={{ width: '20%', height: '20%', top: '20%', right: '30%', animationDelay: `${(i+1) * 0.8 + 0.8}s` }} />
+               <div className="frost-star" style={{ width: '18%', height: '18%', bottom: '30%', left: '20%', animationDelay: `${(i+1) * 0.8 + 1.6}s` }} />
+               <div className="frost-star" style={{ width: '22%', height: '22%', bottom: '20%', right: '40%', animationDelay: `${(i+1) * 0.8 + 0.4}s` }} />
+               <div className="frost-star" style={{ width: '16%', height: '16%', top: '60%', right: '15%', animationDelay: `${(i+1) * 0.8 + 1.8}s` }} />
+               <div className="frost-star" style={{ width: '25%', height: '25%', top: '15%', left: '30%', animationDelay: `${(i+1) * 0.8 + 0.7}s` }} />
             </>
           )}
         </div>
